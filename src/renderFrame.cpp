@@ -18,11 +18,11 @@ uint8_t min(uint8_t a,uint8_t b) {
 void renderFrame(const char fileName[], double aCentre, double bCentre, double zoom) {
     FILE* fp;
     fp = fopen(fileName, "wb");
-    if(!fp) exit(-1);
+    if(!fp) exit(-1); //Maybe change later to not quit whole program
     uint64_t byteCount = 14 + 40 + height * ceil((double)3 * width / 4) * 4;
-    uint8_t* bytes = (uint8_t*)calloc(byteCount * sizeof(uint8_t), sizeof(uint8_t));
+    uint8_t* bytes = (uint8_t*)calloc(byteCount * sizeof(uint8_t), sizeof(uint8_t)); //Create array for bytes in bitmap file
 
-    uint8_t*** pixArr = (uint8_t***)malloc(width * sizeof(uint8_t**));
+    uint8_t*** pixArr = (uint8_t***)malloc(width * sizeof(uint8_t**)); //Create array for pixel values
     for (int i = 0; i < width; i++) {
         pixArr[i] = (uint8_t**)malloc(height * sizeof(uint8_t*));
         for (int j = 0; j < height; j++) {
@@ -30,6 +30,7 @@ void renderFrame(const char fileName[], double aCentre, double bCentre, double z
         }
     }
 
+    //Generate .BMP header data
     bytes[0x0] = 'B';
     bytes[0x1] = 'M';
     bytes[0x2] = byteCount & 0xFF; //File size
@@ -69,7 +70,6 @@ void renderFrame(const char fileName[], double aCentre, double bCentre, double z
     heightSub = height / 2;
     double ca, cb;
     
-    
     for (y = 0; y < height; y++) {
         for (x = 0; x < width; x++) {
             ca = (double)(x - widthSub) / (div * zoom) + aCentre;
@@ -90,7 +90,7 @@ void renderFrame(const char fileName[], double aCentre, double bCentre, double z
             }
         }
     }
-
+    
     //Contrast map
     //Top row
     pixArr[0][0][contr] = max(max(pixArr[0][0][lum], pixArr[1][0][lum]),pixArr[0][1][lum]) - min(min(pixArr[0][0][lum], pixArr[1][0][lum]), pixArr[0][1][lum]);
@@ -128,11 +128,9 @@ void renderFrame(const char fileName[], double aCentre, double bCentre, double z
 
 
 
-
             }
         }
     }
-
 
     int index = 54;
     for (int y = 0; y < height; y++) {
@@ -157,8 +155,8 @@ void renderFrame(const char fileName[], double aCentre, double bCentre, double z
             bytes[index] = pixArr[x][y][red]; //Red
             index++;
         }
-    }
-    */
+    }*/
+    
     fwrite(bytes, 1, byteCount, fp);
     fclose(fp);
     free(bytes);
