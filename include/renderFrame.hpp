@@ -6,12 +6,14 @@
 #define height 1080
 #define iterations 1000
 
-#define red 0
-#define green 1
-#define blue 2
-#define lum 3
-#define contr 4
+struct pixData {
+    uint8_t red;
+    uint8_t green;
+    uint8_t blue;
+    uint8_t lum;
+    uint8_t contr;
+};
 
-void renderFrame(const char fileName[], double aCentre, double bCentre, double zoom);
+int8_t renderFrame(const char fileName[], double aCentre, double bCentre, double zoom);
 
 #endif
