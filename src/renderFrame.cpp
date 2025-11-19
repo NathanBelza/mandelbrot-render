@@ -5,7 +5,7 @@
 #include "renderFrame.hpp"
 #include "mandelbrotCheck.hpp"
 
-uint32_t pixIdx(uint16_t x,uint16_t y) {return x + width * y;}
+uint32_t pixIdx(uint16_t x,uint16_t y) {return (uint32_t)(x + width * y);}
 
 //Get contrast of pixel compared to neighboring pixels
 uint8_t getContr(pixData* pixArr,uint16_t x,uint16_t y);
@@ -14,9 +14,9 @@ int8_t renderFrame(const char fileName[], double aCentre, double bCentre, double
     FILE* fp;
     fp = fopen(fileName, "wb");
     if(!fp) return -1;
-    uint32_t rowBytes = ((3 * width + 3) / 4) * 4; //3 bytes per pixel + ensure multiple of 4 bytes
-    uint64_t byteCount = 14 + 40 + rowBytes * height;
-    uint8_t* bytes = (uint8_t*)calloc(byteCount, 1); //Create array for bytes in bitmap file
+    const uint32_t rowBytes = ((3 * width + 3) / 4) * 4; //3 bytes per pixel + ensure multiple of 4 bytes
+    const uint64_t byteCount = 14 + 40 + rowBytes * height;
+    uint8_t* bytes = (uint8_t*)calloc((size_t)byteCount, 1); //Create array for bytes in bitmap file
     if(!bytes) {
         fclose(fp);
         return -2;
@@ -79,9 +79,9 @@ int8_t renderFrame(const char fileName[], double aCentre, double bCentre, double
                 pixArr[pixIdx(x,y)].lum = 0; //Luminance
             }
             else {
-                pixArr[pixIdx(x,y)].red = (uint8_t)(((double)(242 - 11) / 19) * (i % 20)) + 11; //Red - add colour based on iterations
-                pixArr[pixIdx(x,y)].green = (uint8_t)(((double)(154 - 41) / 19) * (i % 20)) + 41; //Green - add colour based on iterations
-                pixArr[pixIdx(x,y)].blue = (uint8_t)(((double)(99 - 150) / 19) * (i % 20)) + 150; //Blue - add colour based on iterations
+                pixArr[pixIdx(x,y)].red = (uint8_t)(((double)(242 - 11) / 19) * (i % 20) + 11); //Red - add colour based on iterations
+                pixArr[pixIdx(x,y)].green = (uint8_t)(((double)(154 - 41) / 19) * (i % 20) + 41); //Green - add colour based on iterations
+                pixArr[pixIdx(x,y)].blue = (uint8_t)(((double)(99 - 150) / 19) * (i % 20) + 150); //Blue - add colour based on iterations
                 pixArr[pixIdx(x,y)].lum = (uint8_t)((pixArr[pixIdx(x,y)].red * 0.3) + (pixArr[pixIdx(x,y)].green * 0.59) + (pixArr[pixIdx(x,y)].blue * 0.11)); //Luminance calculation
             }
         }
@@ -110,26 +110,22 @@ int8_t renderFrame(const char fileName[], double aCentre, double bCentre, double
     int index = 54;
     for (y = 0; y < height; y++) {
         for (x = 0; x < width; x++) {
-            bytes[index] = pixArr[pixIdx(x,y)].contr; //Blue
-            index++;
-            bytes[index] = pixArr[pixIdx(x,y)].contr; //Green
-            index++;
-            bytes[index] = pixArr[pixIdx(x,y)].contr; //Red
-            index++;
+            bytes[index++] = pixArr[pixIdx(x,y)].contr; //Blue
+            bytes[index++] = pixArr[pixIdx(x,y)].contr; //Green
+            bytes[index++] = pixArr[pixIdx(x,y)].contr; //Red
         }
+        for(uint8_t pad = 0;pad < rowBytes - width * 3; pad++) bytes[index++] = 0x00; //Make sure rows have a multiple of 4 bytes
     }
 
     /* //Need to make output two BMPs
     int index = 54;
     for (y = 0; y < height; y++) {
         for (x = 0; x < width; x++) {
-            bytes[index] = pixArr[pixIdx(x,y)].blue; //Blue
-            index++;
-            bytes[index] = pixArr[pixIdx(x,y)].green; //Green
-            index++;
-            bytes[index] = pixArr[pixIdx(x,y)].red; //Red
-            index++;
+            bytes[index++] = pixArr[pixIdx(x,y)].blue; //Blue
+            bytes[index++] = pixArr[pixIdx(x,y)].green; //Green
+            bytes[index++] = pixArr[pixIdx(x,y)].red; //Red
         }
+        for(uint8_t pad = 0;pad < width % 4; pad++) bytes[index++] = 0x00;
     }*/
     
     fwrite(bytes, 1, byteCount, fp);
@@ -149,7 +145,7 @@ uint8_t getContr(pixData* pixArr,uint16_t x,uint16_t y) {
             nx = x + dx;
             ny = y + dy;
             if(nx >= 0 && nx < width && ny >= 0 && ny < height) { //Check for pixel not out of image bounds
-                lum = pixArr[pixIdx((int16_t)x+dx,y+dy)].lum;
+                lum = pixArr[pixIdx(nx,ny)].lum;
                 if(lum > maxLum) maxLum = lum;
                 if(lum < minLum) minLum = lum;
             }
