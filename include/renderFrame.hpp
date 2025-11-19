@@ -5,6 +5,7 @@
 #define width 1920
 #define height 1080
 #define iterations 1000
+#define contrastThreshold 16
 
 struct pixData {
     uint8_t red;

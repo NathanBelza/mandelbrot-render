@@ -5,26 +5,22 @@
 #include "renderFrame.hpp"
 #include "mandelbrotCheck.hpp"
 
-uint8_t max(uint8_t a,uint8_t b) {
-    if(a > b) return a;
-    return b;
-}
-
-uint8_t min(uint8_t a,uint8_t b) {
-    if(a < b) return a;
-    return b;
-}
-
 uint32_t pixIdx(uint16_t x,uint16_t y) {return x + width * y;}
+
+//Get contrast of pixel compared to neighboring pixels
+uint8_t getContr(pixData* pixArr,uint16_t x,uint16_t y);
 
 int8_t renderFrame(const char fileName[], double aCentre, double bCentre, double zoom) {
     FILE* fp;
     fp = fopen(fileName, "wb");
-    if(!fp) return -1; //Maybe change later to not quit whole program
-    uint32_t rowCount = ((3 * width + 3) / 4) * 4; //3 bytes per pixel + ensure multiple of 4 bytes
-    uint64_t byteCount = 14 + 40 + rowCount * height;
+    if(!fp) return -1;
+    uint32_t rowBytes = ((3 * width + 3) / 4) * 4; //3 bytes per pixel + ensure multiple of 4 bytes
+    uint64_t byteCount = 14 + 40 + rowBytes * height;
     uint8_t* bytes = (uint8_t*)calloc(byteCount, 1); //Create array for bytes in bitmap file
-    if(!bytes) return -2;
+    if(!bytes) {
+        fclose(fp);
+        return -2;
+    }
 
     //Generate .BMP header data
     bytes[0x0] = 'B';
@@ -60,20 +56,22 @@ int8_t renderFrame(const char fileName[], double aCentre, double bCentre, double
     bytes[0x2D] = printRes >> 24 & 0xFF;
 
     pixData* pixArr = (pixData*)malloc(width * height * sizeof(pixData)); //Create an array for pixel values
-    if(!pixArr) return -3;
+    if(!pixArr) {
+        fclose(fp);
+        free(bytes);
+        return -3;
+    }
     uint16_t x, y;
-    int i;
-    double widthSub, heightSub, div;
-    div = width / 4;
-    widthSub = width / 2;
-    heightSub = height / 2;
+    const double div = width / 4;
+    const double widthSub = width / 2;
+    const double heightSub = height / 2;
     double ca, cb;
-    
+    uint32_t i;
     for(y = 0; y < height; y++) {
         for(x = 0; x < width; x++) {
-            ca = (double)(x - widthSub) / (div * zoom) + aCentre;
+            ca = (double)(x - widthSub) / (div * zoom) + aCentre; //Convert pixel coordinates onto complex plane (in a + bi)
             cb = (double)(y - heightSub) / (div * zoom) + bCentre;
-            i = mandelbrot(ca, cb, iterations);
+            i = mandelbrot(ca, cb, iterations); //Check how many iterations until value blows up to infinity
             if(i == iterations) {
                 pixArr[pixIdx(x,y)].red = 0; //Red
                 pixArr[pixIdx(x,y)].green = 0; //Green
@@ -81,56 +79,26 @@ int8_t renderFrame(const char fileName[], double aCentre, double bCentre, double
                 pixArr[pixIdx(x,y)].lum = 0; //Luminance
             }
             else {
-                pixArr[pixIdx(x,y)].red = (uint8_t)(((double)(242 - 11) / 19) * (i % 20)) + 11; //Red
-                pixArr[pixIdx(x,y)].green = (uint8_t)(((double)(154 - 41) / 19) * (i % 20)) + 41; //Green
-                pixArr[pixIdx(x,y)].blue = (uint8_t)(((double)(99 - 150) / 19) * (i % 20)) + 150; //Blue
-                pixArr[pixIdx(x,y)].lum = (uint8_t)((pixArr[pixIdx(x,y)].red * 0.3) + (pixArr[pixIdx(x,y)].green * 0.59) + (pixArr[pixIdx(x,y)].blue * 0.11)); //Luminance
+                pixArr[pixIdx(x,y)].red = (uint8_t)(((double)(242 - 11) / 19) * (i % 20)) + 11; //Red - add colour based on iterations
+                pixArr[pixIdx(x,y)].green = (uint8_t)(((double)(154 - 41) / 19) * (i % 20)) + 41; //Green - add colour based on iterations
+                pixArr[pixIdx(x,y)].blue = (uint8_t)(((double)(99 - 150) / 19) * (i % 20)) + 150; //Blue - add colour based on iterations
+                pixArr[pixIdx(x,y)].lum = (uint8_t)((pixArr[pixIdx(x,y)].red * 0.3) + (pixArr[pixIdx(x,y)].green * 0.59) + (pixArr[pixIdx(x,y)].blue * 0.11)); //Luminance calculation
             }
         }
     }
     
     //Contrast map
-    //Top row
-    pixArr[pixIdx(0,0)].contr = max(max(pixArr[pixIdx(0,0)].lum, pixArr[pixIdx(1,0)].lum),pixArr[pixIdx(0,1)].lum)
-    - min(min(pixArr[pixIdx(0,0)].lum, pixArr[pixIdx(1,0)].lum), pixArr[pixIdx(0,1)].lum);
-    for(x = 1; x < width - 1; x++) {
-        pixArr[pixIdx(x,0)].contr = max(max(max(pixArr[pixIdx(x,0)].lum, pixArr[pixIdx(x+1,0)].lum), pixArr[pixIdx(x-1,0)].lum), pixArr[pixIdx(x,1)].lum)
-        - min(min(min(pixArr[pixIdx(x,0)].lum, pixArr[pixIdx(x+1,0)].lum), pixArr[pixIdx(x-1,0)].lum), pixArr[pixIdx(x,1)].lum);
-    }
-    pixArr[pixIdx(width-1,0)].contr = max(max(pixArr[pixIdx(width-1,0)].lum, pixArr[pixIdx(width-2,0)].lum),pixArr[pixIdx(width-1,1)].lum)
-    - min(min(pixArr[pixIdx(width-1,0)].lum, pixArr[pixIdx(width-2,0)].lum), pixArr[pixIdx(width-1,1)].lum);
-    //Middle
-    for(y = 1; y < height - 1; y++) {
-        pixArr[pixIdx(0,y)].contr = max(max(max(pixArr[pixIdx(0,y)].lum, pixArr[pixIdx(1,y)].lum), pixArr[pixIdx(0,y+1)].lum), pixArr[pixIdx(0,y-1)].lum)
-        - min(min(min(pixArr[pixIdx(0,y)].lum, pixArr[pixIdx(1,y)].lum), pixArr[pixIdx(0,y+1)].lum), pixArr[pixIdx(0,y-1)].lum);
-        for(x = 1; x < width - 1; x++) {
-            pixArr[pixIdx(x,y)].contr = max(max(max(max(pixArr[pixIdx(x,y)].lum, pixArr[pixIdx(x+1,y)].lum), pixArr[pixIdx(x-1,y)].lum), pixArr[pixIdx(x,y+1)].lum), pixArr[pixIdx(x,y-1)].lum)
-            - min(min(min(min(pixArr[pixIdx(x,y)].lum, pixArr[pixIdx(x+1,y)].lum), pixArr[pixIdx(x-1,y)].lum), pixArr[pixIdx(x,y+1)].lum), pixArr[pixIdx(x,y-1)].lum);
-        }
-        pixArr[pixIdx(width-1,y)].contr = max(max(max(pixArr[pixIdx(width-1,y)].lum, pixArr[pixIdx(width-2,y)].lum), pixArr[pixIdx(width-1,y+1)].lum), pixArr[pixIdx(width-1,y-1)].lum)
-        - min(min(min(pixArr[pixIdx(width-1,y)].lum, pixArr[pixIdx(width-2,y)].lum), pixArr[pixIdx(width-1,y+1)].lum), pixArr[pixIdx(width-1,y-1)].lum);
-    }
-    //Bottom row
-    pixArr[pixIdx(0,height-1)].contr = max(max(pixArr[pixIdx(0,height-1)].lum, pixArr[pixIdx(1,height-1)].lum), pixArr[pixIdx(0,height-2)].lum)
-    - min(min(pixArr[pixIdx(0,height-1)].lum, pixArr[pixIdx(1,height-1)].lum), pixArr[pixIdx(0,height-2)].lum);
-    for(x = 1; x < width - 1; x++) {
-        pixArr[pixIdx(x,height-1)].contr = max(max(max(pixArr[pixIdx(x,height-1)].lum, pixArr[pixIdx(x+1,height-1)].lum), pixArr[pixIdx(x-1,height-1)].lum), pixArr[pixIdx(x,height-2)].lum)
-        - min(min(min(pixArr[pixIdx(x,height-1)].lum, pixArr[pixIdx(x+1,height-1)].lum), pixArr[pixIdx(x-1,height-1)].lum), pixArr[pixIdx(x,height-2)].lum);
-    }
-    pixArr[pixIdx(width-1,height-1)].contr = max(max(pixArr[pixIdx(width-1,height-1)].lum, pixArr[pixIdx(width-2,height-1)].lum), pixArr[pixIdx(width-1,height-2)].lum)
-    - min(min(pixArr[pixIdx(width-1,height-1)].lum, pixArr[pixIdx(width-2,height-1)].lum), pixArr[pixIdx(width-1,height-2)].lum);
-
-    //Contrast threshold
-    for (int y = 0; y < height; y++) {
-        for (int x = 0; x < width; x++) {
-            if (pixArr[pixIdx(x,y)].contr < 16) pixArr[pixIdx(x,y)].contr = 0;
+    for(y = 0; y < height; y++) {
+        for(x = 0; x < width; x++) {
+            pixArr[pixIdx(x,y)].contr = getContr(pixArr,x,y);
+            if(pixArr[pixIdx(x,y)].contr < contrastThreshold) pixArr[pixIdx(x,y)].contr = 0;
         }
     }
 
-    //Blend factor
-    for (int y = 0; y < height; y++) {
-        for (int x = 0; x < width; x++) {
-            if (pixArr[pixIdx(x,y)].contr != 0) {
+    //Blend factor - TODO
+    for(y = 0; y < height; y++) {
+        for(x = 0; x < width; x++) {
+            if(pixArr[pixIdx(x,y)].contr != 0) {
 
 
 
@@ -138,10 +106,10 @@ int8_t renderFrame(const char fileName[], double aCentre, double bCentre, double
             }
         }
     }
-/*
+
     int index = 54;
-    for (int y = 0; y < height; y++) {
-        for (int x = 0; x < width; x++) {
+    for (y = 0; y < height; y++) {
+        for (x = 0; x < width; x++) {
             bytes[index] = pixArr[pixIdx(x,y)].contr; //Blue
             index++;
             bytes[index] = pixArr[pixIdx(x,y)].contr; //Green
@@ -149,12 +117,12 @@ int8_t renderFrame(const char fileName[], double aCentre, double bCentre, double
             bytes[index] = pixArr[pixIdx(x,y)].contr; //Red
             index++;
         }
-    }*/
+    }
 
-    
+    /* //Need to make output two BMPs
     int index = 54;
-    for (int y = 0; y < height; y++) {
-        for (int x = 0; x < width; x++) {
+    for (y = 0; y < height; y++) {
+        for (x = 0; x < width; x++) {
             bytes[index] = pixArr[pixIdx(x,y)].blue; //Blue
             index++;
             bytes[index] = pixArr[pixIdx(x,y)].green; //Green
@@ -162,11 +130,30 @@ int8_t renderFrame(const char fileName[], double aCentre, double bCentre, double
             bytes[index] = pixArr[pixIdx(x,y)].red; //Red
             index++;
         }
-    }
+    }*/
     
     fwrite(bytes, 1, byteCount, fp);
     fclose(fp);
     free(bytes);
     free(pixArr);
     return 0;
+}
+
+uint8_t getContr(pixData* pixArr,uint16_t x,uint16_t y) {
+    uint8_t maxLum = 0, minLum = 255;
+    uint8_t lum;
+    int16_t nx, ny;
+    for(int8_t dy = -1; dy <= 1; dy++) {
+        for(int8_t dx = -1; dx <= 1; dx++) {
+            if(dx != 0 && dy != 0) continue; //Skip pixel if diagonal to centre
+            nx = x + dx;
+            ny = y + dy;
+            if(nx >= 0 && nx < width && ny >= 0 && ny < height) { //Check for pixel not out of image bounds
+                lum = pixArr[pixIdx((int16_t)x+dx,y+dy)].lum;
+                if(lum > maxLum) maxLum = lum;
+                if(lum < minLum) minLum = lum;
+            }
+        }
+    }
+    return maxLum - minLum;
 }
