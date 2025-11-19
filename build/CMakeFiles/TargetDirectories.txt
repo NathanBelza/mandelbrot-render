@@ -1,0 +1,3 @@
+C:/Users/Nathan/Git_Proj/Mandelbrot_Render/build/CMakeFiles/mandelbrotRender.dir
+C:/Users/Nathan/Git_Proj/Mandelbrot_Render/build/CMakeFiles/edit_cache.dir
+C:/Users/Nathan/Git_Proj/Mandelbrot_Render/build/CMakeFiles/rebuild_cache.dir

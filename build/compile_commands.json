@@ -1,0 +1,20 @@
+[
+{
+  "directory": "C:/Users/Nathan/Git_Proj/Mandelbrot_Render/build",
+  "command": "C:/msys64/ucrt64/bin/g++.exe  @CMakeFiles/mandelbrotRender.dir/includes_CXX.rsp -g -o CMakeFiles/mandelbrotRender.dir/src/main.cpp.obj -c C:/Users/Nathan/Git_Proj/Mandelbrot_Render/src/main.cpp",
+  "file": "C:/Users/Nathan/Git_Proj/Mandelbrot_Render/src/main.cpp",
+  "output": "CMakeFiles/mandelbrotRender.dir/src/main.cpp.obj"
+},
+{
+  "directory": "C:/Users/Nathan/Git_Proj/Mandelbrot_Render/build",
+  "command": "C:/msys64/ucrt64/bin/g++.exe  @CMakeFiles/mandelbrotRender.dir/includes_CXX.rsp -g -o CMakeFiles/mandelbrotRender.dir/src/mandelbrotCheck.cpp.obj -c C:/Users/Nathan/Git_Proj/Mandelbrot_Render/src/mandelbrotCheck.cpp",
+  "file": "C:/Users/Nathan/Git_Proj/Mandelbrot_Render/src/mandelbrotCheck.cpp",
+  "output": "CMakeFiles/mandelbrotRender.dir/src/mandelbrotCheck.cpp.obj"
+},
+{
+  "directory": "C:/Users/Nathan/Git_Proj/Mandelbrot_Render/build",
+  "command": "C:/msys64/ucrt64/bin/g++.exe  @CMakeFiles/mandelbrotRender.dir/includes_CXX.rsp -g -o CMakeFiles/mandelbrotRender.dir/src/renderFrame.cpp.obj -c C:/Users/Nathan/Git_Proj/Mandelbrot_Render/src/renderFrame.cpp",
+  "file": "C:/Users/Nathan/Git_Proj/Mandelbrot_Render/src/renderFrame.cpp",
+  "output": "CMakeFiles/mandelbrotRender.dir/src/renderFrame.cpp.obj"
+}
+]
