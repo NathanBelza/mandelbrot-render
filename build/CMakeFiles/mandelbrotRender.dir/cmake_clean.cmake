@@ -1,10 +1,10 @@
 file(REMOVE_RECURSE
-  "CMakeFiles/mandelbrotRender.dir/src/main.cpp.obj"
-  "CMakeFiles/mandelbrotRender.dir/src/main.cpp.obj.d"
-  "CMakeFiles/mandelbrotRender.dir/src/mandelbrotCheck.cpp.obj"
-  "CMakeFiles/mandelbrotRender.dir/src/mandelbrotCheck.cpp.obj.d"
-  "CMakeFiles/mandelbrotRender.dir/src/renderFrame.cpp.obj"
-  "CMakeFiles/mandelbrotRender.dir/src/renderFrame.cpp.obj.d"
+  "CMakeFiles/mandelbrotRender.dir/src/main.c.obj"
+  "CMakeFiles/mandelbrotRender.dir/src/main.c.obj.d"
+  "CMakeFiles/mandelbrotRender.dir/src/mandelbrotCheck.c.obj"
+  "CMakeFiles/mandelbrotRender.dir/src/mandelbrotCheck.c.obj.d"
+  "CMakeFiles/mandelbrotRender.dir/src/renderFrame.c.obj"
+  "CMakeFiles/mandelbrotRender.dir/src/renderFrame.c.obj.d"
   "libmandelbrotRender.dll.a"
   "mandelbrotRender.exe"
   "mandelbrotRender.exe.manifest"
@@ -12,6 +12,6 @@ file(REMOVE_RECURSE
 )
 
 # Per-language clean rules from dependency scanning.
-foreach(lang CXX)
+foreach(lang C)
   include(CMakeFiles/mandelbrotRender.dir/cmake_clean_${lang}.cmake OPTIONAL)
 endforeach()

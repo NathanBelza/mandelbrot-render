@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include <stdint.h>
 #include <math.h>
-#include "renderFrame.hpp"
+#include "renderFrame.h"
 
 int main(void) {
     double aCentre, bCentre, zoom;

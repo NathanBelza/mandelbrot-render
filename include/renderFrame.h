@@ -7,13 +7,17 @@
 #define iterations 1000
 #define contrastThreshold 16
 
-struct pixData {
+typedef struct {
     uint8_t red;
     uint8_t green;
     uint8_t blue;
     uint8_t lum;
     uint8_t contr;
-};
+} pixData;
+
+typedef struct {
+    bool isHorizontal;
+} edgeData;
 
 int8_t renderFrame(const char fileName[], double aCentre, double bCentre, double zoom);
 

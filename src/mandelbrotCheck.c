@@ -1,5 +1,5 @@
 #include <stdint.h>
-#include "renderFrame.hpp"
+#include "renderFrame.h"
 
 int mandelbrot(double ca, double cb, uint32_t iter) {
     double za = 0, zb = 0, za2 = 0, zb2 = 0;

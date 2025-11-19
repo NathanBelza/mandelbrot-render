@@ -129,77 +129,77 @@ mandelbrotRender/fast:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/mandelbrotRender.dir/build.make CMakeFiles/mandelbrotRender.dir/build
 .PHONY : mandelbrotRender/fast
 
-src/main.obj: src/main.cpp.obj
+src/main.obj: src/main.c.obj
 .PHONY : src/main.obj
 
 # target to build an object file
-src/main.cpp.obj:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/mandelbrotRender.dir/build.make CMakeFiles/mandelbrotRender.dir/src/main.cpp.obj
-.PHONY : src/main.cpp.obj
+src/main.c.obj:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/mandelbrotRender.dir/build.make CMakeFiles/mandelbrotRender.dir/src/main.c.obj
+.PHONY : src/main.c.obj
 
-src/main.i: src/main.cpp.i
+src/main.i: src/main.c.i
 .PHONY : src/main.i
 
 # target to preprocess a source file
-src/main.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/mandelbrotRender.dir/build.make CMakeFiles/mandelbrotRender.dir/src/main.cpp.i
-.PHONY : src/main.cpp.i
+src/main.c.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/mandelbrotRender.dir/build.make CMakeFiles/mandelbrotRender.dir/src/main.c.i
+.PHONY : src/main.c.i
 
-src/main.s: src/main.cpp.s
+src/main.s: src/main.c.s
 .PHONY : src/main.s
 
 # target to generate assembly for a file
-src/main.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/mandelbrotRender.dir/build.make CMakeFiles/mandelbrotRender.dir/src/main.cpp.s
-.PHONY : src/main.cpp.s
+src/main.c.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/mandelbrotRender.dir/build.make CMakeFiles/mandelbrotRender.dir/src/main.c.s
+.PHONY : src/main.c.s
 
-src/mandelbrotCheck.obj: src/mandelbrotCheck.cpp.obj
+src/mandelbrotCheck.obj: src/mandelbrotCheck.c.obj
 .PHONY : src/mandelbrotCheck.obj
 
 # target to build an object file
-src/mandelbrotCheck.cpp.obj:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/mandelbrotRender.dir/build.make CMakeFiles/mandelbrotRender.dir/src/mandelbrotCheck.cpp.obj
-.PHONY : src/mandelbrotCheck.cpp.obj
+src/mandelbrotCheck.c.obj:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/mandelbrotRender.dir/build.make CMakeFiles/mandelbrotRender.dir/src/mandelbrotCheck.c.obj
+.PHONY : src/mandelbrotCheck.c.obj
 
-src/mandelbrotCheck.i: src/mandelbrotCheck.cpp.i
+src/mandelbrotCheck.i: src/mandelbrotCheck.c.i
 .PHONY : src/mandelbrotCheck.i
 
 # target to preprocess a source file
-src/mandelbrotCheck.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/mandelbrotRender.dir/build.make CMakeFiles/mandelbrotRender.dir/src/mandelbrotCheck.cpp.i
-.PHONY : src/mandelbrotCheck.cpp.i
+src/mandelbrotCheck.c.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/mandelbrotRender.dir/build.make CMakeFiles/mandelbrotRender.dir/src/mandelbrotCheck.c.i
+.PHONY : src/mandelbrotCheck.c.i
 
-src/mandelbrotCheck.s: src/mandelbrotCheck.cpp.s
+src/mandelbrotCheck.s: src/mandelbrotCheck.c.s
 .PHONY : src/mandelbrotCheck.s
 
 # target to generate assembly for a file
-src/mandelbrotCheck.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/mandelbrotRender.dir/build.make CMakeFiles/mandelbrotRender.dir/src/mandelbrotCheck.cpp.s
-.PHONY : src/mandelbrotCheck.cpp.s
+src/mandelbrotCheck.c.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/mandelbrotRender.dir/build.make CMakeFiles/mandelbrotRender.dir/src/mandelbrotCheck.c.s
+.PHONY : src/mandelbrotCheck.c.s
 
-src/renderFrame.obj: src/renderFrame.cpp.obj
+src/renderFrame.obj: src/renderFrame.c.obj
 .PHONY : src/renderFrame.obj
 
 # target to build an object file
-src/renderFrame.cpp.obj:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/mandelbrotRender.dir/build.make CMakeFiles/mandelbrotRender.dir/src/renderFrame.cpp.obj
-.PHONY : src/renderFrame.cpp.obj
+src/renderFrame.c.obj:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/mandelbrotRender.dir/build.make CMakeFiles/mandelbrotRender.dir/src/renderFrame.c.obj
+.PHONY : src/renderFrame.c.obj
 
-src/renderFrame.i: src/renderFrame.cpp.i
+src/renderFrame.i: src/renderFrame.c.i
 .PHONY : src/renderFrame.i
 
 # target to preprocess a source file
-src/renderFrame.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/mandelbrotRender.dir/build.make CMakeFiles/mandelbrotRender.dir/src/renderFrame.cpp.i
-.PHONY : src/renderFrame.cpp.i
+src/renderFrame.c.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/mandelbrotRender.dir/build.make CMakeFiles/mandelbrotRender.dir/src/renderFrame.c.i
+.PHONY : src/renderFrame.c.i
 
-src/renderFrame.s: src/renderFrame.cpp.s
+src/renderFrame.s: src/renderFrame.c.s
 .PHONY : src/renderFrame.s
 
 # target to generate assembly for a file
-src/renderFrame.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/mandelbrotRender.dir/build.make CMakeFiles/mandelbrotRender.dir/src/renderFrame.cpp.s
-.PHONY : src/renderFrame.cpp.s
+src/renderFrame.c.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/mandelbrotRender.dir/build.make CMakeFiles/mandelbrotRender.dir/src/renderFrame.c.s
+.PHONY : src/renderFrame.c.s
 
 # Help Target
 help:

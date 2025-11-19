@@ -2,13 +2,15 @@
 #include <stdint.h>
 #include <stdlib.h>
 #include <math.h>
-#include "renderFrame.hpp"
-#include "mandelbrotCheck.hpp"
+#include "renderFrame.h"
+#include "mandelbrotCheck.h"
 
-uint32_t pixIdx(uint16_t x,uint16_t y) {return (uint32_t)(x + width * y);}
+uint32_t pixIdx(uint16_t x,uint16_t y) {return x + width * y;}
 
 //Get contrast of pixel compared to neighboring pixels
 uint8_t getContr(pixData* pixArr,uint16_t x,uint16_t y);
+float getBlendFactor(pixData* pixArr,uint16_t x,uint16_t y);
+void getEdgeDir(pixData* pixArr,uint16_t x,uint16_t y);
 
 int8_t renderFrame(const char fileName[], double aCentre, double bCentre, double zoom) {
     FILE* fp;
@@ -95,15 +97,11 @@ int8_t renderFrame(const char fileName[], double aCentre, double bCentre, double
         }
     }
 
-    //Blend factor - TODO
+    //Blend factor
+    float blendFactor;
     for(y = 0; y < height; y++) {
         for(x = 0; x < width; x++) {
-            if(pixArr[pixIdx(x,y)].contr != 0) {
-
-
-
-
-            }
+            blendFactor = getBlendFactor(pixArr,x,y);
         }
     }
 
@@ -152,4 +150,43 @@ uint8_t getContr(pixData* pixArr,uint16_t x,uint16_t y) {
         }
     }
     return maxLum - minLum;
+}
+
+float smoothstep(float a) {
+    if(a < 0) return 0;
+    else if(a > 1.0) return 1.0;
+    else return 3 * a * a - 2 * a * a * a;
+}
+
+float getBlendFactor(pixData* pixArr,uint16_t x,uint16_t y) {
+    float blendFactor = 0;
+    int16_t nx, ny;
+    for(int8_t dy = -1; dy <= 1; dy++) {
+        for(int8_t dx = -1; dx <= 1; dx++) {
+            nx = x + dx;
+            ny = y + dy;
+            if(nx >= 0 && nx < width && ny >= 0 && ny < height) { //Check for pixel not out of image bounds
+                if(dx == 0 && dy == 0) continue;
+                else if(dx != 0 && dy != 0) blendFactor += pixArr[pixIdx(nx,ny)].lum; //Weighted average of neighboring pixels
+                else blendFactor += 2 * pixArr[pixIdx(nx,ny)].lum;
+            }
+        }
+    }
+    blendFactor *= 1.0/12;
+    blendFactor = fabsf(blendFactor - pixArr[pixIdx(x,y)].lum); //Find contrast between weighted average and middle pixel
+    if(pixArr[pixIdx(x,y)].contr == 0) return 0.0;
+    blendFactor = smoothstep((float) blendFactor / pixArr[pixIdx(x,y)].contr);
+    return blendFactor * blendFactor; //Squared smoothstep with clamping in 0-1
+}
+
+void getEdgeDir(pixData* pixArr,uint16_t x,uint16_t y) {
+    edgeData edge;
+
+    float horizontal = 0;
+
+
+
+
+
+
 }
