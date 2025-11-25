@@ -8,10 +8,9 @@
 
 uint32_t pixIdx(uint16_t x,uint16_t y) {return x + width * y;}
 
-//Get contrast of pixel compared to neighboring pixels
-uint8_t getContr(pixData* pixArr,uint16_t x,uint16_t y);
-float getBlendFactor(pixData* pixArr,uint16_t x,uint16_t y);
-bool getEdgeDir(pixData* pixArr,uint16_t x,uint16_t y);
+uint8_t getContr(pixData* pixArr,uint16_t x,uint16_t y); //Get contrast of pixel compared to neighboring pixels
+float getBlendFactor(pixData* pixArr,uint16_t x,uint16_t y); //Get a blend factor between 0-1 from neighboring pixels
+bool getEdgeDir(bool* edgeSign,pixData* pixArr,uint16_t x,uint16_t y); //Return true if horizontal edge, else return false if vertical
 
 int8_t renderFrame(const char fileName[], double aCentre, double bCentre, double zoom) {
     FILE* fp;
@@ -98,41 +97,68 @@ int8_t renderFrame(const char fileName[], double aCentre, double bCentre, double
         }
     }
 
-    //Blend factor
+
+    pixData* pixArrTest = (pixData*)malloc(width * height * sizeof(pixData)); //Create an array for pixel values
+    if(!pixArrTest) {
+        fclose(fp);
+        free(bytes);
+        return -3;
+    }
+
+    
     float blendFactor;
     for(y = 0; y < height; y++) {
         for(x = 0; x < width; x++) {
-            blendFactor = getBlendFactor(pixArr,x,y);
+            pixArrTest[pixIdx(x,y)].red = pixArr[pixIdx(x,y)].red;
+            pixArrTest[pixIdx(x,y)].green = pixArr[pixIdx(x,y)].green;
+            pixArrTest[pixIdx(x,y)].blue = pixArr[pixIdx(x,y)].blue;
+
+
+            if(pixArr[pixIdx(x,y)].contr != 0) {
+                blendFactor = getBlendFactor(pixArr,x,y);
+                bool edgeSign;
+                bool edgeDir = getEdgeDir(&edgeSign,pixArr,x,y);
+                if(edgeDir && edgeSign) { //Blend north
+                    pixArrTest[pixIdx(x,y)].red = pixArr[pixIdx(x,y)].red * (1 - blendFactor) + pixArr[pixIdx(x,y+1)].red * blendFactor;
+                    pixArrTest[pixIdx(x,y)].green = pixArr[pixIdx(x,y)].green * (1 - blendFactor) + pixArr[pixIdx(x,y+1)].green * blendFactor;
+                    pixArrTest[pixIdx(x,y)].blue = pixArr[pixIdx(x,y)].blue * (1 - blendFactor) + pixArr[pixIdx(x,y+1)].blue * blendFactor;
+                } else if(edgeDir && !edgeSign) { //Blend south
+                    pixArrTest[pixIdx(x,y)].red = pixArr[pixIdx(x,y)].red * (1 - blendFactor) + pixArr[pixIdx(x,y-1)].red * blendFactor;
+                    pixArrTest[pixIdx(x,y)].green = pixArr[pixIdx(x,y)].green * (1 - blendFactor) + pixArr[pixIdx(x,y-1)].green * blendFactor;
+                    pixArrTest[pixIdx(x,y)].blue = pixArr[pixIdx(x,y)].blue * (1 - blendFactor) + pixArr[pixIdx(x,y-1)].blue * blendFactor;
+                } else if(!edgeDir && edgeSign) { //Blend east
+                    pixArrTest[pixIdx(x,y)].red = pixArr[pixIdx(x,y)].red * (1 - blendFactor) + pixArr[pixIdx(x+1,y)].red * blendFactor;
+                    pixArrTest[pixIdx(x,y)].green = pixArr[pixIdx(x,y)].green * (1 - blendFactor) + pixArr[pixIdx(x+1,y)].green * blendFactor;
+                    pixArrTest[pixIdx(x,y)].blue = pixArr[pixIdx(x,y)].blue * (1 - blendFactor) + pixArr[pixIdx(x+1,y)].blue * blendFactor;
+                } else if(!edgeDir && !edgeSign) { //Blend west
+                    pixArrTest[pixIdx(x,y)].red = pixArr[pixIdx(x,y)].red * (1 - blendFactor) + pixArr[pixIdx(x-1,y)].red * blendFactor;
+                    pixArrTest[pixIdx(x,y)].green = pixArr[pixIdx(x,y)].green * (1 - blendFactor) + pixArr[pixIdx(x-1,y)].green * blendFactor;
+                    pixArrTest[pixIdx(x,y)].blue = pixArr[pixIdx(x,y)].blue * (1 - blendFactor) + pixArr[pixIdx(x-1,y)].blue * blendFactor;
+                }
+            }
         }
     }
-
-    for(y = 0; y < height; y++) { //test
-        for(x = 0; x < width; x++) {
-            pixArr[pixIdx(x,y)].contr = (uint8_t) 255 * (!getEdgeDir(pixArr,x,y));
-        }
-    }
-
-
-    int index = 54;
+/*
+    int index = 54; //Test for contr map
     for (y = 0; y < height; y++) {
         for (x = 0; x < width; x++) {
             bytes[index++] = pixArr[pixIdx(x,y)].contr; //Blue
             bytes[index++] = pixArr[pixIdx(x,y)].contr; //Green
             bytes[index++] = pixArr[pixIdx(x,y)].contr; //Red
         }
-        for(uint8_t pad = 0;pad < rowBytes - width * 3; pad++) bytes[index++] = 0x00; //Make sure rows have a multiple of 4 bytes
-    }
+        for(uint8_t pad = 0; pad < rowBytes - width * 3; pad++) bytes[index++] = 0x00; //Make sure rows have a multiple of 4 bytes
+    }*/
 
-    /* //Need to make output two BMPs
+    //Need to make output two BMPs
     int index = 54;
     for (y = 0; y < height; y++) {
         for (x = 0; x < width; x++) {
-            bytes[index++] = pixArr[pixIdx(x,y)].blue; //Blue
-            bytes[index++] = pixArr[pixIdx(x,y)].green; //Green
-            bytes[index++] = pixArr[pixIdx(x,y)].red; //Red
+            bytes[index++] = pixArrTest[pixIdx(x,y)].blue; //Blue
+            bytes[index++] = pixArrTest[pixIdx(x,y)].green; //Green
+            bytes[index++] = pixArrTest[pixIdx(x,y)].red; //Red
         }
-        for(uint8_t pad = 0;pad < width % 4; pad++) bytes[index++] = 0x00;
-    }*/
+        for(uint8_t pad = 0; pad < rowBytes - width * 3; pad++) bytes[index++] = 0x00; //Make sure rows have a multiple of 4 bytes
+    }
     
     fwrite(bytes, 1, byteCount, fp);
     fclose(fp);
@@ -187,7 +213,8 @@ float getBlendFactor(pixData* pixArr,uint16_t x,uint16_t y) {
     return blendFactor * blendFactor; //Squared smoothstep with clamping in 0-1
 }
 
-bool getEdgeDir(pixData* pixArr,uint16_t x,uint16_t y) {
+bool getEdgeDir(bool* edgeSign,pixData* pixArr,uint16_t x,uint16_t y) {
+    bool isHorizontal;
     uint8_t l[3][3] = {0};
 
     int16_t nx, ny;
@@ -210,6 +237,18 @@ bool getEdgeDir(pixData* pixArr,uint16_t x,uint16_t y) {
     fabs(l[2][1] + l[0][1] - 2 * l[1][1]) * 2 + //le + lw - 2lm
     fabs(l[2][2] + l[0][2] - 2 * l[1][2]) + //lne + lnw - 2ln
     fabs(l[2][0] + l[0][0] - 2 * l[1][0]); //lse + lsw - 2ls
+    
+    isHorizontal = horizontal >= vertical;
 
-    return horizontal >= vertical;
+    if(isHorizontal) {
+        if(l[1][2] > l[1][0]) { //Check if ln is bigger than ls
+            *edgeSign = true;
+        } else *edgeSign = false;
+    } else {
+        if(l[2][1] > l[0][1]) { //Check if le is bigger than lw
+            *edgeSign = true;
+        } else *edgeSign = false;
+    }
+
+    return isHorizontal;
 }
