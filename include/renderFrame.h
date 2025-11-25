@@ -15,10 +15,6 @@ typedef struct {
     uint8_t contr;
 } pixData;
 
-typedef struct {
-    bool isHorizontal;
-} edgeData;
-
 int8_t renderFrame(const char fileName[], double aCentre, double bCentre, double zoom);
 
 #endif

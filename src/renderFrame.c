@@ -2,6 +2,7 @@
 #include <stdint.h>
 #include <stdlib.h>
 #include <math.h>
+#include <stdbool.h>
 #include "renderFrame.h"
 #include "mandelbrotCheck.h"
 
@@ -10,7 +11,7 @@ uint32_t pixIdx(uint16_t x,uint16_t y) {return x + width * y;}
 //Get contrast of pixel compared to neighboring pixels
 uint8_t getContr(pixData* pixArr,uint16_t x,uint16_t y);
 float getBlendFactor(pixData* pixArr,uint16_t x,uint16_t y);
-void getEdgeDir(pixData* pixArr,uint16_t x,uint16_t y);
+bool getEdgeDir(pixData* pixArr,uint16_t x,uint16_t y);
 
 int8_t renderFrame(const char fileName[], double aCentre, double bCentre, double zoom) {
     FILE* fp;
@@ -105,6 +106,13 @@ int8_t renderFrame(const char fileName[], double aCentre, double bCentre, double
         }
     }
 
+    for(y = 0; y < height; y++) { //test
+        for(x = 0; x < width; x++) {
+            pixArr[pixIdx(x,y)].contr = (uint8_t) 255 * (!getEdgeDir(pixArr,x,y));
+        }
+    }
+
+
     int index = 54;
     for (y = 0; y < height; y++) {
         for (x = 0; x < width; x++) {
@@ -179,14 +187,29 @@ float getBlendFactor(pixData* pixArr,uint16_t x,uint16_t y) {
     return blendFactor * blendFactor; //Squared smoothstep with clamping in 0-1
 }
 
-void getEdgeDir(pixData* pixArr,uint16_t x,uint16_t y) {
-    edgeData edge;
+bool getEdgeDir(pixData* pixArr,uint16_t x,uint16_t y) {
+    uint8_t l[3][3] = {0};
 
-    float horizontal = 0;
+    int16_t nx, ny;
+    for(int8_t dy = -1; dy <= 1; dy++) {
+        for(int8_t dx = -1; dx <= 1; dx++) {
+            nx = x + dx;
+            ny = y + dy;
+            if(nx >= 0 && nx < width && ny >= 0 && ny < height) { //Check for pixel not out of image bounds
+                l[dx+1][dy+1] = pixArr[pixIdx(nx,ny)].lum;
+            }
+        }
+    }
 
+    float horizontal =
+    fabs(l[1][2] + l[1][0] - 2 * l[1][1]) * 2 + //ln + ls - 2lm
+    fabs(l[2][2] + l[2][0] - 2 * l[2][1]) + //lne + lse - 2le
+    fabs(l[0][2] + l[0][0] - 2 * l[0][1]); //lnw + lsw - 2lw
 
+    float vertical =
+    fabs(l[2][1] + l[0][1] - 2 * l[1][1]) * 2 + //le + lw - 2lm
+    fabs(l[2][2] + l[0][2] - 2 * l[1][2]) + //lne + lnw - 2ln
+    fabs(l[2][0] + l[0][0] - 2 * l[1][0]); //lse + lsw - 2ls
 
-
-
-
+    return horizontal >= vertical;
 }

@@ -22,5 +22,6 @@ CMakeFiles/mandelbrotRender.dir/src/renderFrame.c.obj: \
  C:/msys64/ucrt64/include/malloc.h \
  C:/msys64/ucrt64/lib/gcc/x86_64-w64-mingw32/15.2.0/include/mm_malloc.h \
  C:/msys64/ucrt64/include/errno.h C:/msys64/ucrt64/include/math.h \
+ C:/msys64/ucrt64/lib/gcc/x86_64-w64-mingw32/15.2.0/include/stdbool.h \
  C:/Users/Nathan/Git_Proj/Mandelbrot_Render/include/renderFrame.h \
  C:/Users/Nathan/Git_Proj/Mandelbrot_Render/include/mandelbrotCheck.h
