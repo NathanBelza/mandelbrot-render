@@ -72,70 +72,53 @@ include CMakeFiles/mandelbrotRender.dir/flags.make
 CMakeFiles/mandelbrotRender.dir/codegen:
 .PHONY : CMakeFiles/mandelbrotRender.dir/codegen
 
-CMakeFiles/mandelbrotRender.dir/src/main.c.obj: CMakeFiles/mandelbrotRender.dir/flags.make
-CMakeFiles/mandelbrotRender.dir/src/main.c.obj: CMakeFiles/mandelbrotRender.dir/includes_C.rsp
-CMakeFiles/mandelbrotRender.dir/src/main.c.obj: C:/Users/Nathan/Git_Proj/Mandelbrot_Render/src/main.c
-CMakeFiles/mandelbrotRender.dir/src/main.c.obj: CMakeFiles/mandelbrotRender.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=C:/Users/Nathan/Git_Proj/Mandelbrot_Render/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_1) "Building C object CMakeFiles/mandelbrotRender.dir/src/main.c.obj"
-	C:/msys64/ucrt64/bin/gcc.exe $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -MD -MT CMakeFiles/mandelbrotRender.dir/src/main.c.obj -MF CMakeFiles/mandelbrotRender.dir/src/main.c.obj.d -o CMakeFiles/mandelbrotRender.dir/src/main.c.obj -c C:/Users/Nathan/Git_Proj/Mandelbrot_Render/src/main.c
+CMakeFiles/mandelbrotRender.dir/src/main.cpp.obj: CMakeFiles/mandelbrotRender.dir/flags.make
+CMakeFiles/mandelbrotRender.dir/src/main.cpp.obj: CMakeFiles/mandelbrotRender.dir/includes_CXX.rsp
+CMakeFiles/mandelbrotRender.dir/src/main.cpp.obj: C:/Users/Nathan/Git_Proj/Mandelbrot_Render/src/main.cpp
+CMakeFiles/mandelbrotRender.dir/src/main.cpp.obj: CMakeFiles/mandelbrotRender.dir/compiler_depend.ts
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=C:/Users/Nathan/Git_Proj/Mandelbrot_Render/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_1) "Building CXX object CMakeFiles/mandelbrotRender.dir/src/main.cpp.obj"
+	C:/msys64/ucrt64/bin/g++.exe $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/mandelbrotRender.dir/src/main.cpp.obj -MF CMakeFiles/mandelbrotRender.dir/src/main.cpp.obj.d -o CMakeFiles/mandelbrotRender.dir/src/main.cpp.obj -c C:/Users/Nathan/Git_Proj/Mandelbrot_Render/src/main.cpp
 
-CMakeFiles/mandelbrotRender.dir/src/main.c.i: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing C source to CMakeFiles/mandelbrotRender.dir/src/main.c.i"
-	C:/msys64/ucrt64/bin/gcc.exe $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -E C:/Users/Nathan/Git_Proj/Mandelbrot_Render/src/main.c > CMakeFiles/mandelbrotRender.dir/src/main.c.i
+CMakeFiles/mandelbrotRender.dir/src/main.cpp.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CXX source to CMakeFiles/mandelbrotRender.dir/src/main.cpp.i"
+	C:/msys64/ucrt64/bin/g++.exe $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E C:/Users/Nathan/Git_Proj/Mandelbrot_Render/src/main.cpp > CMakeFiles/mandelbrotRender.dir/src/main.cpp.i
 
-CMakeFiles/mandelbrotRender.dir/src/main.c.s: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling C source to assembly CMakeFiles/mandelbrotRender.dir/src/main.c.s"
-	C:/msys64/ucrt64/bin/gcc.exe $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -S C:/Users/Nathan/Git_Proj/Mandelbrot_Render/src/main.c -o CMakeFiles/mandelbrotRender.dir/src/main.c.s
+CMakeFiles/mandelbrotRender.dir/src/main.cpp.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/mandelbrotRender.dir/src/main.cpp.s"
+	C:/msys64/ucrt64/bin/g++.exe $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S C:/Users/Nathan/Git_Proj/Mandelbrot_Render/src/main.cpp -o CMakeFiles/mandelbrotRender.dir/src/main.cpp.s
 
-CMakeFiles/mandelbrotRender.dir/src/mandelbrotCheck.c.obj: CMakeFiles/mandelbrotRender.dir/flags.make
-CMakeFiles/mandelbrotRender.dir/src/mandelbrotCheck.c.obj: CMakeFiles/mandelbrotRender.dir/includes_C.rsp
-CMakeFiles/mandelbrotRender.dir/src/mandelbrotCheck.c.obj: C:/Users/Nathan/Git_Proj/Mandelbrot_Render/src/mandelbrotCheck.c
-CMakeFiles/mandelbrotRender.dir/src/mandelbrotCheck.c.obj: CMakeFiles/mandelbrotRender.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=C:/Users/Nathan/Git_Proj/Mandelbrot_Render/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_2) "Building C object CMakeFiles/mandelbrotRender.dir/src/mandelbrotCheck.c.obj"
-	C:/msys64/ucrt64/bin/gcc.exe $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -MD -MT CMakeFiles/mandelbrotRender.dir/src/mandelbrotCheck.c.obj -MF CMakeFiles/mandelbrotRender.dir/src/mandelbrotCheck.c.obj.d -o CMakeFiles/mandelbrotRender.dir/src/mandelbrotCheck.c.obj -c C:/Users/Nathan/Git_Proj/Mandelbrot_Render/src/mandelbrotCheck.c
+CMakeFiles/mandelbrotRender.dir/src/renderFrame.cpp.obj: CMakeFiles/mandelbrotRender.dir/flags.make
+CMakeFiles/mandelbrotRender.dir/src/renderFrame.cpp.obj: CMakeFiles/mandelbrotRender.dir/includes_CXX.rsp
+CMakeFiles/mandelbrotRender.dir/src/renderFrame.cpp.obj: C:/Users/Nathan/Git_Proj/Mandelbrot_Render/src/renderFrame.cpp
+CMakeFiles/mandelbrotRender.dir/src/renderFrame.cpp.obj: CMakeFiles/mandelbrotRender.dir/compiler_depend.ts
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=C:/Users/Nathan/Git_Proj/Mandelbrot_Render/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_2) "Building CXX object CMakeFiles/mandelbrotRender.dir/src/renderFrame.cpp.obj"
+	C:/msys64/ucrt64/bin/g++.exe $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/mandelbrotRender.dir/src/renderFrame.cpp.obj -MF CMakeFiles/mandelbrotRender.dir/src/renderFrame.cpp.obj.d -o CMakeFiles/mandelbrotRender.dir/src/renderFrame.cpp.obj -c C:/Users/Nathan/Git_Proj/Mandelbrot_Render/src/renderFrame.cpp
 
-CMakeFiles/mandelbrotRender.dir/src/mandelbrotCheck.c.i: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing C source to CMakeFiles/mandelbrotRender.dir/src/mandelbrotCheck.c.i"
-	C:/msys64/ucrt64/bin/gcc.exe $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -E C:/Users/Nathan/Git_Proj/Mandelbrot_Render/src/mandelbrotCheck.c > CMakeFiles/mandelbrotRender.dir/src/mandelbrotCheck.c.i
+CMakeFiles/mandelbrotRender.dir/src/renderFrame.cpp.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CXX source to CMakeFiles/mandelbrotRender.dir/src/renderFrame.cpp.i"
+	C:/msys64/ucrt64/bin/g++.exe $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E C:/Users/Nathan/Git_Proj/Mandelbrot_Render/src/renderFrame.cpp > CMakeFiles/mandelbrotRender.dir/src/renderFrame.cpp.i
 
-CMakeFiles/mandelbrotRender.dir/src/mandelbrotCheck.c.s: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling C source to assembly CMakeFiles/mandelbrotRender.dir/src/mandelbrotCheck.c.s"
-	C:/msys64/ucrt64/bin/gcc.exe $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -S C:/Users/Nathan/Git_Proj/Mandelbrot_Render/src/mandelbrotCheck.c -o CMakeFiles/mandelbrotRender.dir/src/mandelbrotCheck.c.s
-
-CMakeFiles/mandelbrotRender.dir/src/renderFrame.c.obj: CMakeFiles/mandelbrotRender.dir/flags.make
-CMakeFiles/mandelbrotRender.dir/src/renderFrame.c.obj: CMakeFiles/mandelbrotRender.dir/includes_C.rsp
-CMakeFiles/mandelbrotRender.dir/src/renderFrame.c.obj: C:/Users/Nathan/Git_Proj/Mandelbrot_Render/src/renderFrame.c
-CMakeFiles/mandelbrotRender.dir/src/renderFrame.c.obj: CMakeFiles/mandelbrotRender.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=C:/Users/Nathan/Git_Proj/Mandelbrot_Render/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_3) "Building C object CMakeFiles/mandelbrotRender.dir/src/renderFrame.c.obj"
-	C:/msys64/ucrt64/bin/gcc.exe $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -MD -MT CMakeFiles/mandelbrotRender.dir/src/renderFrame.c.obj -MF CMakeFiles/mandelbrotRender.dir/src/renderFrame.c.obj.d -o CMakeFiles/mandelbrotRender.dir/src/renderFrame.c.obj -c C:/Users/Nathan/Git_Proj/Mandelbrot_Render/src/renderFrame.c
-
-CMakeFiles/mandelbrotRender.dir/src/renderFrame.c.i: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing C source to CMakeFiles/mandelbrotRender.dir/src/renderFrame.c.i"
-	C:/msys64/ucrt64/bin/gcc.exe $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -E C:/Users/Nathan/Git_Proj/Mandelbrot_Render/src/renderFrame.c > CMakeFiles/mandelbrotRender.dir/src/renderFrame.c.i
-
-CMakeFiles/mandelbrotRender.dir/src/renderFrame.c.s: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling C source to assembly CMakeFiles/mandelbrotRender.dir/src/renderFrame.c.s"
-	C:/msys64/ucrt64/bin/gcc.exe $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -S C:/Users/Nathan/Git_Proj/Mandelbrot_Render/src/renderFrame.c -o CMakeFiles/mandelbrotRender.dir/src/renderFrame.c.s
+CMakeFiles/mandelbrotRender.dir/src/renderFrame.cpp.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/mandelbrotRender.dir/src/renderFrame.cpp.s"
+	C:/msys64/ucrt64/bin/g++.exe $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S C:/Users/Nathan/Git_Proj/Mandelbrot_Render/src/renderFrame.cpp -o CMakeFiles/mandelbrotRender.dir/src/renderFrame.cpp.s
 
 # Object files for target mandelbrotRender
 mandelbrotRender_OBJECTS = \
-"CMakeFiles/mandelbrotRender.dir/src/main.c.obj" \
-"CMakeFiles/mandelbrotRender.dir/src/mandelbrotCheck.c.obj" \
-"CMakeFiles/mandelbrotRender.dir/src/renderFrame.c.obj"
+"CMakeFiles/mandelbrotRender.dir/src/main.cpp.obj" \
+"CMakeFiles/mandelbrotRender.dir/src/renderFrame.cpp.obj"
 
 # External object files for target mandelbrotRender
 mandelbrotRender_EXTERNAL_OBJECTS =
 
-mandelbrotRender.exe: CMakeFiles/mandelbrotRender.dir/src/main.c.obj
-mandelbrotRender.exe: CMakeFiles/mandelbrotRender.dir/src/mandelbrotCheck.c.obj
-mandelbrotRender.exe: CMakeFiles/mandelbrotRender.dir/src/renderFrame.c.obj
+mandelbrotRender.exe: CMakeFiles/mandelbrotRender.dir/src/main.cpp.obj
+mandelbrotRender.exe: CMakeFiles/mandelbrotRender.dir/src/renderFrame.cpp.obj
 mandelbrotRender.exe: CMakeFiles/mandelbrotRender.dir/build.make
 mandelbrotRender.exe: CMakeFiles/mandelbrotRender.dir/linkLibs.rsp
 mandelbrotRender.exe: CMakeFiles/mandelbrotRender.dir/objects1.rsp
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --bold --progress-dir=C:/Users/Nathan/Git_Proj/Mandelbrot_Render/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_4) "Linking C executable mandelbrotRender.exe"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --bold --progress-dir=C:/Users/Nathan/Git_Proj/Mandelbrot_Render/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_3) "Linking CXX executable mandelbrotRender.exe"
 	"C:/Program Files/CMake/bin/cmake.exe" -E rm -f CMakeFiles/mandelbrotRender.dir/objects.a
 	C:/msys64/ucrt64/bin/ar.exe qc CMakeFiles/mandelbrotRender.dir/objects.a @CMakeFiles/mandelbrotRender.dir/objects1.rsp
-	C:/msys64/ucrt64/bin/gcc.exe -g -Wl,--whole-archive CMakeFiles/mandelbrotRender.dir/objects.a -Wl,--no-whole-archive -o mandelbrotRender.exe -Wl,--out-implib,libmandelbrotRender.dll.a -Wl,--major-image-version,0,--minor-image-version,0 @CMakeFiles/mandelbrotRender.dir/linkLibs.rsp
+	C:/msys64/ucrt64/bin/g++.exe -g -Wl,--whole-archive CMakeFiles/mandelbrotRender.dir/objects.a -Wl,--no-whole-archive -o mandelbrotRender.exe -Wl,--out-implib,libmandelbrotRender.dll.a -Wl,--major-image-version,0,--minor-image-version,0 @CMakeFiles/mandelbrotRender.dir/linkLibs.rsp
 
 # Rule to build all files generated by this target.
 CMakeFiles/mandelbrotRender.dir/build: mandelbrotRender.exe

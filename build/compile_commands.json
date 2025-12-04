@@ -1,20 +1,14 @@
 [
 {
   "directory": "C:/Users/Nathan/Git_Proj/Mandelbrot_Render/build",
-  "command": "C:/msys64/ucrt64/bin/gcc.exe  @CMakeFiles/mandelbrotRender.dir/includes_C.rsp -g -o CMakeFiles/mandelbrotRender.dir/src/main.c.obj -c C:/Users/Nathan/Git_Proj/Mandelbrot_Render/src/main.c",
-  "file": "C:/Users/Nathan/Git_Proj/Mandelbrot_Render/src/main.c",
-  "output": "CMakeFiles/mandelbrotRender.dir/src/main.c.obj"
+  "command": "C:/msys64/ucrt64/bin/g++.exe  @CMakeFiles/mandelbrotRender.dir/includes_CXX.rsp -g -std=gnu++20 -o CMakeFiles/mandelbrotRender.dir/src/main.cpp.obj -c C:/Users/Nathan/Git_Proj/Mandelbrot_Render/src/main.cpp",
+  "file": "C:/Users/Nathan/Git_Proj/Mandelbrot_Render/src/main.cpp",
+  "output": "CMakeFiles/mandelbrotRender.dir/src/main.cpp.obj"
 },
 {
   "directory": "C:/Users/Nathan/Git_Proj/Mandelbrot_Render/build",
-  "command": "C:/msys64/ucrt64/bin/gcc.exe  @CMakeFiles/mandelbrotRender.dir/includes_C.rsp -g -o CMakeFiles/mandelbrotRender.dir/src/mandelbrotCheck.c.obj -c C:/Users/Nathan/Git_Proj/Mandelbrot_Render/src/mandelbrotCheck.c",
-  "file": "C:/Users/Nathan/Git_Proj/Mandelbrot_Render/src/mandelbrotCheck.c",
-  "output": "CMakeFiles/mandelbrotRender.dir/src/mandelbrotCheck.c.obj"
-},
-{
-  "directory": "C:/Users/Nathan/Git_Proj/Mandelbrot_Render/build",
-  "command": "C:/msys64/ucrt64/bin/gcc.exe  @CMakeFiles/mandelbrotRender.dir/includes_C.rsp -g -o CMakeFiles/mandelbrotRender.dir/src/renderFrame.c.obj -c C:/Users/Nathan/Git_Proj/Mandelbrot_Render/src/renderFrame.c",
-  "file": "C:/Users/Nathan/Git_Proj/Mandelbrot_Render/src/renderFrame.c",
-  "output": "CMakeFiles/mandelbrotRender.dir/src/renderFrame.c.obj"
+  "command": "C:/msys64/ucrt64/bin/g++.exe  @CMakeFiles/mandelbrotRender.dir/includes_CXX.rsp -g -std=gnu++20 -o CMakeFiles/mandelbrotRender.dir/src/renderFrame.cpp.obj -c C:/Users/Nathan/Git_Proj/Mandelbrot_Render/src/renderFrame.cpp",
+  "file": "C:/Users/Nathan/Git_Proj/Mandelbrot_Render/src/renderFrame.cpp",
+  "output": "CMakeFiles/mandelbrotRender.dir/src/renderFrame.cpp.obj"
 }
 ]

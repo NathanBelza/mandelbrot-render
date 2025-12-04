@@ -30,7 +30,6 @@ CMakeFiles/mandelbrotRender.dir/src/renderFrame.cpp.obj: \
  C:/msys64/ucrt64/lib/gcc/x86_64-w64-mingw32/15.2.0/include/mm_malloc.h \
  C:/msys64/ucrt64/include/errno.h \
  C:/msys64/ucrt64/include/c++/15.2.0/bits/std_abs.h \
- C:/msys64/ucrt64/include/c++/15.2.0/math.h \
  C:/msys64/ucrt64/include/c++/15.2.0/cmath \
  C:/msys64/ucrt64/include/c++/15.2.0/bits/requires_hosted.h \
  C:/msys64/ucrt64/include/c++/15.2.0/bits/cpp_type_traits.h \
@@ -46,16 +45,22 @@ CMakeFiles/mandelbrotRender.dir/src/renderFrame.cpp.obj: \
  C:/msys64/ucrt64/include/c++/15.2.0/bits/stl_pair.h \
  C:/msys64/ucrt64/include/c++/15.2.0/bits/move.h \
  C:/msys64/ucrt64/include/c++/15.2.0/bits/utility.h \
+ C:/msys64/ucrt64/include/c++/15.2.0/compare \
+ C:/msys64/ucrt64/include/c++/15.2.0/concepts \
  C:/msys64/ucrt64/include/c++/15.2.0/bits/stl_iterator_base_types.h \
+ C:/msys64/ucrt64/include/c++/15.2.0/bits/iterator_concepts.h \
+ C:/msys64/ucrt64/include/c++/15.2.0/bits/ptr_traits.h \
+ C:/msys64/ucrt64/include/c++/15.2.0/bits/ranges_cmp.h \
  C:/msys64/ucrt64/include/c++/15.2.0/bits/stl_iterator_base_funcs.h \
  C:/msys64/ucrt64/include/c++/15.2.0/bits/concept_check.h \
  C:/msys64/ucrt64/include/c++/15.2.0/debug/assertions.h \
  C:/msys64/ucrt64/include/c++/15.2.0/bits/stl_iterator.h \
- C:/msys64/ucrt64/include/c++/15.2.0/bits/ptr_traits.h \
+ C:/msys64/ucrt64/include/c++/15.2.0/new \
+ C:/msys64/ucrt64/include/c++/15.2.0/bits/exception.h \
+ C:/msys64/ucrt64/include/c++/15.2.0/bits/stl_construct.h \
  C:/msys64/ucrt64/include/c++/15.2.0/debug/debug.h \
  C:/msys64/ucrt64/include/c++/15.2.0/bits/predefined_ops.h \
  C:/msys64/ucrt64/include/c++/15.2.0/bit \
- C:/msys64/ucrt64/include/c++/15.2.0/concepts \
  C:/msys64/ucrt64/include/c++/15.2.0/limits \
  C:/msys64/ucrt64/include/c++/15.2.0/tr1/gamma.tcc \
  C:/msys64/ucrt64/include/c++/15.2.0/tr1/special_function_util.h \
@@ -69,5 +74,59 @@ CMakeFiles/mandelbrotRender.dir/src/renderFrame.cpp.obj: \
  C:/msys64/ucrt64/include/c++/15.2.0/tr1/poly_hermite.tcc \
  C:/msys64/ucrt64/include/c++/15.2.0/tr1/poly_laguerre.tcc \
  C:/msys64/ucrt64/include/c++/15.2.0/tr1/riemann_zeta.tcc \
+ C:/msys64/ucrt64/lib/gcc/x86_64-w64-mingw32/15.2.0/include/stdbool.h \
  C:/Users/Nathan/Git_Proj/Mandelbrot_Render/include/renderFrame.hpp \
- C:/Users/Nathan/Git_Proj/Mandelbrot_Render/include/mandelbrotCheck.hpp
+ C:/msys64/ucrt64/include/c++/15.2.0/vector \
+ C:/msys64/ucrt64/include/c++/15.2.0/bits/allocator.h \
+ C:/msys64/ucrt64/include/c++/15.2.0/x86_64-w64-mingw32/bits/c++allocator.h \
+ C:/msys64/ucrt64/include/c++/15.2.0/bits/new_allocator.h \
+ C:/msys64/ucrt64/include/c++/15.2.0/bits/memoryfwd.h \
+ C:/msys64/ucrt64/include/c++/15.2.0/bits/stl_uninitialized.h \
+ C:/msys64/ucrt64/include/c++/15.2.0/ext/alloc_traits.h \
+ C:/msys64/ucrt64/include/c++/15.2.0/bits/alloc_traits.h \
+ C:/msys64/ucrt64/include/c++/15.2.0/bits/stl_vector.h \
+ C:/msys64/ucrt64/include/c++/15.2.0/initializer_list \
+ C:/msys64/ucrt64/include/c++/15.2.0/bits/ranges_base.h \
+ C:/msys64/ucrt64/include/c++/15.2.0/bits/max_size_type.h \
+ C:/msys64/ucrt64/include/c++/15.2.0/numbers \
+ C:/msys64/ucrt64/include/c++/15.2.0/bits/stl_bvector.h \
+ C:/msys64/ucrt64/include/c++/15.2.0/bits/functional_hash.h \
+ C:/msys64/ucrt64/include/c++/15.2.0/bits/hash_bytes.h \
+ C:/msys64/ucrt64/include/c++/15.2.0/bits/refwrap.h \
+ C:/msys64/ucrt64/include/c++/15.2.0/bits/invoke.h \
+ C:/msys64/ucrt64/include/c++/15.2.0/bits/stl_function.h \
+ C:/msys64/ucrt64/include/c++/15.2.0/backward/binders.h \
+ C:/msys64/ucrt64/include/c++/15.2.0/bits/range_access.h \
+ C:/msys64/ucrt64/include/c++/15.2.0/bits/vector.tcc \
+ C:/msys64/ucrt64/include/c++/15.2.0/bits/memory_resource.h \
+ C:/msys64/ucrt64/include/c++/15.2.0/cstddef \
+ C:/msys64/ucrt64/include/c++/15.2.0/bits/uses_allocator.h \
+ C:/msys64/ucrt64/include/c++/15.2.0/bits/uses_allocator_args.h \
+ C:/msys64/ucrt64/include/c++/15.2.0/tuple \
+ C:/msys64/ucrt64/include/c++/15.2.0/bits/ranges_util.h \
+ C:/msys64/ucrt64/include/c++/15.2.0/string \
+ C:/msys64/ucrt64/include/c++/15.2.0/bits/stringfwd.h \
+ C:/msys64/ucrt64/include/c++/15.2.0/bits/char_traits.h \
+ C:/msys64/ucrt64/include/c++/15.2.0/bits/postypes.h \
+ C:/msys64/ucrt64/include/c++/15.2.0/cwchar \
+ C:/msys64/ucrt64/include/wchar.h \
+ C:/msys64/ucrt64/include/corecrt_wctype.h \
+ C:/msys64/ucrt64/include/_mingw_stat64.h \
+ C:/msys64/ucrt64/include/sec_api/wchar_s.h \
+ C:/msys64/ucrt64/include/c++/15.2.0/bits/localefwd.h \
+ C:/msys64/ucrt64/include/c++/15.2.0/x86_64-w64-mingw32/bits/c++locale.h \
+ C:/msys64/ucrt64/include/c++/15.2.0/clocale \
+ C:/msys64/ucrt64/include/locale.h \
+ C:/msys64/ucrt64/include/c++/15.2.0/iosfwd \
+ C:/msys64/ucrt64/include/c++/15.2.0/cctype \
+ C:/msys64/ucrt64/include/ctype.h \
+ C:/msys64/ucrt64/include/c++/15.2.0/bits/ostream_insert.h \
+ C:/msys64/ucrt64/include/c++/15.2.0/bits/cxxabi_forced.h \
+ C:/msys64/ucrt64/include/c++/15.2.0/bits/basic_string.h \
+ C:/msys64/ucrt64/include/c++/15.2.0/string_view \
+ C:/msys64/ucrt64/include/c++/15.2.0/bits/string_view.tcc \
+ C:/msys64/ucrt64/include/c++/15.2.0/ext/string_conversions.h \
+ C:/msys64/ucrt64/include/c++/15.2.0/cstdio \
+ C:/msys64/ucrt64/include/c++/15.2.0/cerrno \
+ C:/msys64/ucrt64/include/c++/15.2.0/bits/charconv.h \
+ C:/msys64/ucrt64/include/c++/15.2.0/bits/basic_string.tcc
