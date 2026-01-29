@@ -37,11 +37,11 @@ class mandelImage {
     void setHeight(uint32_t newHeight) {height = newHeight;}
     uint32_t getWidth() {return width;}
     uint32_t getHeight() {return height;}
-    void indexToCoordinate(uint32_t index, uint32_t& x, uint32_t& y) {
+    void indexToCoord(uint32_t index, uint32_t& x, uint32_t& y) {
         x = index % width;
         y = (index - x) / width;
     }
-    uint32_t coordinateToIndex(uint32_t x, uint32_t y) {return x + width * y;}
+    uint32_t coordToIndex(uint32_t x, uint32_t y) {return x + width * y;}
     private:
     void populateImage(renderData render);
     uint32_t mandelbrotCheck(double ca, double cb, uint32_t iter);

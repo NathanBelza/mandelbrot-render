@@ -57,9 +57,9 @@ int8_t mandelImage::renderFrame(std::string fileName, renderData render) {
     int indx = 54;
     for (y = 0; y < height; y++) {
         for (x = 0; x < width; x++) {
-            bytes[indx++] = pixelData[coordinateToIndex(x,y)].fxaaBlue; //Blue
-            bytes[indx++] = pixelData[coordinateToIndex(x,y)].fxaaGreen; //Green
-            bytes[indx++] = pixelData[coordinateToIndex(x,y)].fxaaRed; //Red
+            bytes[indx++] = pixelData[coordToIndex(x,y)].fxaaBlue; //Blue
+            bytes[indx++] = pixelData[coordToIndex(x,y)].fxaaGreen; //Green
+            bytes[indx++] = pixelData[coordToIndex(x,y)].fxaaRed; //Red
         }
         for(uint8_t pad = 0; pad < rowBytes - getWidth() * 3; pad++) bytes[indx++] = 0x00; //Make sure rows have a multiple of 4 bytes
     }
@@ -98,16 +98,16 @@ void mandelImage::populateImage(renderData render) {
             cb = (double)(y - heightSub) / (div * render.zoom) + render.bCentre;
             i = mandelbrotCheck(ca, cb, render.iterations); //Check how many iterations until value blows up to infinity
             if(i == render.iterations) {
-                pixelData[coordinateToIndex(x,y)].red = 0; //Red
-                pixelData[coordinateToIndex(x,y)].green = 0; //Green
-                pixelData[coordinateToIndex(x,y)].blue = 0; //Blue
-                pixelData[coordinateToIndex(x,y)].lum = 0; //Luminance
+                pixelData[coordToIndex(x,y)].red = 0; //Red
+                pixelData[coordToIndex(x,y)].green = 0; //Green
+                pixelData[coordToIndex(x,y)].blue = 0; //Blue
+                pixelData[coordToIndex(x,y)].lum = 0; //Luminance
             }
             else {
-                pixelData[coordinateToIndex(x,y)].red = (uint8_t)(((double)(242 - 11) / 19) * (i % 20) + 11); //Red - add colour based on iterations
-                pixelData[coordinateToIndex(x,y)].green = (uint8_t)(((double)(154 - 41) / 19) * (i % 20) + 41); //Green - add colour based on iterations
-                pixelData[coordinateToIndex(x,y)].blue = (uint8_t)(((double)(99 - 150) / 19) * (i % 20) + 150); //Blue - add colour based on iterations
-                pixelData[coordinateToIndex(x,y)].lum = (pixelData[coordinateToIndex(x,y)].red * 0.3) + (pixelData[coordinateToIndex(x,y)].green * 0.59) + (pixelData[coordinateToIndex(x,y)].blue * 0.11); //Luminance calculation
+                pixelData[coordToIndex(x,y)].red = (uint8_t)(((double)(242 - 11) / 19) * (i % 20) + 11); //Red - add colour based on iterations
+                pixelData[coordToIndex(x,y)].green = (uint8_t)(((double)(154 - 41) / 19) * (i % 20) + 41); //Green - add colour based on iterations
+                pixelData[coordToIndex(x,y)].blue = (uint8_t)(((double)(99 - 150) / 19) * (i % 20) + 150); //Blue - add colour based on iterations
+                pixelData[coordToIndex(x,y)].lum = (pixelData[coordToIndex(x,y)].red * 0.3) + (pixelData[coordToIndex(x,y)].green * 0.59) + (pixelData[coordToIndex(x,y)].blue * 0.11); //Luminance calculation
             }
         }
     }
@@ -118,33 +118,33 @@ void mandelImage::applyFXAA() {
     float blendFactor;
     for(uint32_t y = 0; y < height; y++) {
         for(uint32_t x = 0; x < width; x++) {
-            pixelData[coordinateToIndex(x,y)].fxaaRed = pixelData[coordinateToIndex(x,y)].red;
-            pixelData[coordinateToIndex(x,y)].fxaaGreen = pixelData[coordinateToIndex(x,y)].green;
-            pixelData[coordinateToIndex(x,y)].fxaaBlue = pixelData[coordinateToIndex(x,y)].blue;
+            pixelData[coordToIndex(x,y)].fxaaRed = pixelData[coordToIndex(x,y)].red;
+            pixelData[coordToIndex(x,y)].fxaaGreen = pixelData[coordToIndex(x,y)].green;
+            pixelData[coordToIndex(x,y)].fxaaBlue = pixelData[coordToIndex(x,y)].blue;
 
-            if(pixelData[coordinateToIndex(x,y)].contr != 0) {
+            if(pixelData[coordToIndex(x,y)].contr != 0) {
                 blendFactor = getPixBlendFactor(x,y);
                 getEdgeDir(x,y);
                 if(edgeDir && edgeSign && y < height-1) { //Blend north
-                    pixelData[coordinateToIndex(x,y)].fxaaRed = pixelData[coordinateToIndex(x,y)].red * (1 - blendFactor) + pixelData[coordinateToIndex(x,y+1)].red * blendFactor;
-                    pixelData[coordinateToIndex(x,y)].fxaaGreen = pixelData[coordinateToIndex(x,y)].green * (1 - blendFactor) + pixelData[coordinateToIndex(x,y+1)].green * blendFactor;
-                    pixelData[coordinateToIndex(x,y)].fxaaBlue = pixelData[coordinateToIndex(x,y)].blue * (1 - blendFactor) + pixelData[coordinateToIndex(x,y+1)].blue * blendFactor;
+                    pixelData[coordToIndex(x,y)].fxaaRed = pixelData[coordToIndex(x,y)].red * (1 - blendFactor) + pixelData[coordToIndex(x,y+1)].red * blendFactor;
+                    pixelData[coordToIndex(x,y)].fxaaGreen = pixelData[coordToIndex(x,y)].green * (1 - blendFactor) + pixelData[coordToIndex(x,y+1)].green * blendFactor;
+                    pixelData[coordToIndex(x,y)].fxaaBlue = pixelData[coordToIndex(x,y)].blue * (1 - blendFactor) + pixelData[coordToIndex(x,y+1)].blue * blendFactor;
                 } else if(edgeDir && !edgeSign && y > 0) { //Blend south
-                    pixelData[coordinateToIndex(x,y)].fxaaRed = pixelData[coordinateToIndex(x,y)].red * (1 - blendFactor) + pixelData[coordinateToIndex(x,y-1)].red * blendFactor;
-                    pixelData[coordinateToIndex(x,y)].fxaaGreen = pixelData[coordinateToIndex(x,y)].green * (1 - blendFactor) + pixelData[coordinateToIndex(x,y-1)].green * blendFactor;
-                    pixelData[coordinateToIndex(x,y)].fxaaBlue = pixelData[coordinateToIndex(x,y)].blue * (1 - blendFactor) + pixelData[coordinateToIndex(x,y-1)].blue * blendFactor;
+                    pixelData[coordToIndex(x,y)].fxaaRed = pixelData[coordToIndex(x,y)].red * (1 - blendFactor) + pixelData[coordToIndex(x,y-1)].red * blendFactor;
+                    pixelData[coordToIndex(x,y)].fxaaGreen = pixelData[coordToIndex(x,y)].green * (1 - blendFactor) + pixelData[coordToIndex(x,y-1)].green * blendFactor;
+                    pixelData[coordToIndex(x,y)].fxaaBlue = pixelData[coordToIndex(x,y)].blue * (1 - blendFactor) + pixelData[coordToIndex(x,y-1)].blue * blendFactor;
                 } else if(!edgeDir && edgeSign && x < width-1) { //Blend east
-                    pixelData[coordinateToIndex(x,y)].fxaaRed = pixelData[coordinateToIndex(x,y)].red * (1 - blendFactor) + pixelData[coordinateToIndex(x+1,y)].red * blendFactor;
-                    pixelData[coordinateToIndex(x,y)].fxaaGreen = pixelData[coordinateToIndex(x,y)].green * (1 - blendFactor) + pixelData[coordinateToIndex(x+1,y)].green * blendFactor;
-                    pixelData[coordinateToIndex(x,y)].fxaaBlue = pixelData[coordinateToIndex(x,y)].blue * (1 - blendFactor) + pixelData[coordinateToIndex(x+1,y)].blue * blendFactor;
+                    pixelData[coordToIndex(x,y)].fxaaRed = pixelData[coordToIndex(x,y)].red * (1 - blendFactor) + pixelData[coordToIndex(x+1,y)].red * blendFactor;
+                    pixelData[coordToIndex(x,y)].fxaaGreen = pixelData[coordToIndex(x,y)].green * (1 - blendFactor) + pixelData[coordToIndex(x+1,y)].green * blendFactor;
+                    pixelData[coordToIndex(x,y)].fxaaBlue = pixelData[coordToIndex(x,y)].blue * (1 - blendFactor) + pixelData[coordToIndex(x+1,y)].blue * blendFactor;
                 } else if(!edgeDir && !edgeSign && x > 0) { //Blend west
-                    pixelData[coordinateToIndex(x,y)].fxaaRed = pixelData[coordinateToIndex(x,y)].red * (1 - blendFactor) + pixelData[coordinateToIndex(x-1,y)].red * blendFactor;
-                    pixelData[coordinateToIndex(x,y)].fxaaGreen = pixelData[coordinateToIndex(x,y)].green * (1 - blendFactor) + pixelData[coordinateToIndex(x-1,y)].green * blendFactor;
-                    pixelData[coordinateToIndex(x,y)].fxaaBlue = pixelData[coordinateToIndex(x,y)].blue * (1 - blendFactor) + pixelData[coordinateToIndex(x-1,y)].blue * blendFactor;
+                    pixelData[coordToIndex(x,y)].fxaaRed = pixelData[coordToIndex(x,y)].red * (1 - blendFactor) + pixelData[coordToIndex(x-1,y)].red * blendFactor;
+                    pixelData[coordToIndex(x,y)].fxaaGreen = pixelData[coordToIndex(x,y)].green * (1 - blendFactor) + pixelData[coordToIndex(x-1,y)].green * blendFactor;
+                    pixelData[coordToIndex(x,y)].fxaaBlue = pixelData[coordToIndex(x,y)].blue * (1 - blendFactor) + pixelData[coordToIndex(x-1,y)].blue * blendFactor;
                 } else {
-                    pixelData[coordinateToIndex(x,y)].fxaaRed = pixelData[coordinateToIndex(x,y)].red;
-                    pixelData[coordinateToIndex(x,y)].fxaaGreen = pixelData[coordinateToIndex(x,y)].green;
-                    pixelData[coordinateToIndex(x,y)].fxaaBlue = pixelData[coordinateToIndex(x,y)].blue;
+                    pixelData[coordToIndex(x,y)].fxaaRed = pixelData[coordToIndex(x,y)].red;
+                    pixelData[coordToIndex(x,y)].fxaaGreen = pixelData[coordToIndex(x,y)].green;
+                    pixelData[coordToIndex(x,y)].fxaaBlue = pixelData[coordToIndex(x,y)].blue;
                 }
             }
         }
@@ -160,17 +160,17 @@ void mandelImage::getContr() {
         for(int8_t dy = -1; dy <= 1; dy++) {
             for(int8_t dx = -1; dx <= 1; dx++) {
                 if(dx != 0 && dy != 0) continue; //Skip pixel if diagonal to centre
-                indexToCoordinate(i, x ,y);
+                indexToCoord(i, x ,y);
                 nx = x + dx;
                 ny = y + dy;
                 if(nx >= 0 && nx < width && ny >= 0 && ny < height) { //Check for pixel not out of image bounds
-                    lum = pixelData[coordinateToIndex(nx,ny)].lum;
+                    lum = pixelData[coordToIndex(nx,ny)].lum;
                     if(lum > maxLum) maxLum = lum;
                     if(lum < minLum) minLum = lum;
                 }
             }
         }
-        pixelData[coordinateToIndex(x,y)].contr = maxLum - minLum;
+        pixelData[coordToIndex(x,y)].contr = maxLum - minLum;
     }
 }
 
@@ -183,15 +183,15 @@ float mandelImage::getPixBlendFactor(uint32_t x, uint32_t y) {
             ny = y + dy;
             if(nx >= 0 && nx < width && ny >= 0 && ny < height) { //Check for pixel not out of image bounds
                 if(dx == 0 && dy == 0) continue;
-                else if(dx != 0 && dy != 0) blendFactor += pixelData[coordinateToIndex(nx,ny)].lum; //Weighted average of neighboring pixels
-                else blendFactor += 2 * pixelData[coordinateToIndex(nx,ny)].lum;
+                else if(dx != 0 && dy != 0) blendFactor += pixelData[coordToIndex(nx,ny)].lum; //Weighted average of neighboring pixels
+                else blendFactor += 2 * pixelData[coordToIndex(nx,ny)].lum;
             }
         }
     }
     blendFactor *= 1.0/12;
-    blendFactor = fabsf(blendFactor - pixelData[coordinateToIndex(x,y)].lum); //Find contrast between weighted average and middle pixel
-    if(pixelData[coordinateToIndex(x,y)].contr == 0) return 0.0;
-    blendFactor = smoothstep((float) blendFactor / pixelData[coordinateToIndex(x,y)].contr);
+    blendFactor = fabsf(blendFactor - pixelData[coordToIndex(x,y)].lum); //Find contrast between weighted average and middle pixel
+    if(pixelData[coordToIndex(x,y)].contr == 0) return 0.0;
+    blendFactor = smoothstep((float) blendFactor / pixelData[coordToIndex(x,y)].contr);
     return blendFactor * blendFactor; //Squared smoothstep with clamping in 0-1
 }
 
@@ -205,7 +205,7 @@ void mandelImage::getEdgeDir(uint32_t x, uint32_t y) {
             nx = x + dx;
             ny = y + dy;
             if(nx >= 0 && nx < width && ny >= 0 && ny < height) { //Check for pixel not out of image bounds
-                l[dx+1][dy+1] = pixelData[coordinateToIndex(nx,ny)].lum;
+                l[dx+1][dy+1] = pixelData[coordToIndex(nx,ny)].lum;
             }
         }
     }
