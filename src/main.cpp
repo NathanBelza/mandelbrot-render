@@ -10,24 +10,29 @@ int main(void) {
     image.setWidth(1920);
     image.setHeight(1080);
     renderData render = {0};
-    render.iterations = 1000;
+    render.iterations = 1000; // TODO: add iterations control
     std::string fileName;
-    uint32_t anim, frames; //anim is small
+    uint32_t anim, frames;
     
     std::cout << "What are the coordinates of the point to centre on?\n";
-    while (1) {
-        if((std::cin >> render.aCentre >> render.bCentre).good()) break;
+    while(!(std::cin >> render.aCentre >> render.bCentre).good()) {
         std::cout << "Incorrect formatting, retry\n";
+        std::cin.clear();
+        std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
     }
+
     std::cout << "What zoom level?\n";
-    while (1) {
-        if((std::cin >> render.zoom).good()) break;
+    while(!(std::cin >> render.zoom).good()) {
         std::cout << "Incorrect formatting, retry\n";
+        std::cin.clear();
+        std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
     }
+
     std::cout << "0 for single image, 1 for zoom animation\n";
-    while (1) {
-        if((std::cin >> anim).good() && (anim == 0 || anim == 1)) break;
+    while(!(std::cin >> anim).good() && (anim == 0 || anim == 1)) {
         std::cout << "Incorrect formatting, retry\n";
+        std::cin.clear();
+        std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
     }
 
     switch (anim) {
@@ -38,10 +43,12 @@ int main(void) {
         break;
     case 1:
         std::cout << "How many frames?\n";
-        while (1) {
-            if((std::cin >> frames).good()) break;
+        while(!(std::cin >> frames).good()) {
             std::cout << "Incorrect formatting, retry\n";
+            std::cin.clear();
+            std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
         }
+
         for (int i = 0; i < frames; i++) {
             render.zoom = pow(2, (double)i / 30);
             fileName.clear();
