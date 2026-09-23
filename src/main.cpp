@@ -6,14 +6,14 @@
 
 #include "render_frame.hpp"
 
-int main(void) {
+std::int32_t main(void) {
     mandel_image image;
     image.set_width(1920);
     image.set_height(1080);
     render_data render = {0};
     render.iterations = 1000; // TODO: add iterations control
     std::string file_name;
-    uint32_t anim, frames;
+    std::uint32_t anim, frames;
     
     std::cout << "What are the coordinates of the point to centre on?\n";
     while(!(std::cin >> render.a_centre >> render.b_centre).good()) {
@@ -50,8 +50,8 @@ int main(void) {
             std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
         }
 
-        for (int i = 0; i < frames; i++) {
-            render.zoom = pow(2, (double)i / 30);
+        for (std::size_t i = 0; i < frames; i++) {
+            render.zoom = pow(2, i/30.0);
             file_name.clear();
             file_name = std::format("{}.bmp", i+1);
 

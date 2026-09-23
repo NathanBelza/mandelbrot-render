@@ -1,26 +1,22 @@
 #include <cstdint>
 #include <cstddef>
-#include <cstdbool>
-#include <cstdlib>
+#include <vector>
 #include <cmath>
+#include <fstream>
 
 #include "render_frame.hpp"
 
-int8_t mandel_image::render_frame(std::string file_name, render_data render) {
+std::int8_t mandel_image::render_frame(std::string file_name, render_data render) {
 
-    FILE* fp;
-    fp = fopen(file_name.c_str(), "wb");
-    if(!fp) {
+    std::ofstream file(file_name, std::ios::binary);
+    if(!file) {
         return -1;
     }
 
-    const uint32_t row_bytes = ((3 * width + 3) / 4) * 4; // 3 bytes per pixel + ensure multiple of 4 bytes
-    const uint64_t byte_count = 14 + 40 + row_bytes * height;
-    uint8_t* bytes = (uint8_t*) calloc((size_t) byte_count, 1); // Create array for bytes in bitmap file
-    if(!bytes) {
-        fclose(fp);
-        return -2;
-    }
+    const std::size_t row_bytes = ((3 * width + 3) / 4) * 4; // 3 bytes per pixel + ensure multiple of 4 bytes
+    const std::size_t byte_count = 14 + 40 + row_bytes * height;
+
+    std::vector<std::uint8_t> bytes(byte_count, 0x00);
 
     // Generate .BMP header data
     bytes[0x0] = 'B';
@@ -65,29 +61,27 @@ int8_t mandel_image::render_frame(std::string file_name, render_data render) {
     apply_fxaa();
 
     // Need to make output two BMPs
-    int x,y;
-    int indx = 54;
-    for (y = 0; y < height; y++) {
-        for (x = 0; x < width; x++) {
+    std::size_t indx = 54;
+    for (std::size_t y = 0; y < height; y++) {
+        for (std::size_t x = 0; x < width; x++) {
             bytes[indx++] = pixel_data[coord_to_index(x,y)].fxaa_blue;
             bytes[indx++] = pixel_data[coord_to_index(x,y)].fxaa_green;
             bytes[indx++] = pixel_data[coord_to_index(x,y)].fxaa_red;
         }
-        for(uint8_t pad = 0; pad < row_bytes - get_width() * 3; pad++) {
+        for(std::uint8_t pad = 0; pad < row_bytes - get_width() * 3; pad++) {
             bytes[indx++] = 0x00; // Make sure rows have a multiple of 4 bytes
         }
     }
     
-    fwrite(bytes, 1, byte_count, fp);
-    fclose(fp);
-    free(bytes);
+    file.write(reinterpret_cast<const char *> (bytes.data()), bytes.size());
     return 0;
 }
 
-uint32_t mandel_image::mandelbrot_check(double ca, double cb, uint32_t iter) {
+// check if a point is in the mandelbrot set, returns number of iterations until divergence
+std::size_t mandel_image::mandelbrot_check(double ca, double cb, std::size_t iter) {
     double za = 0, zb = 0, za2 = 0, zb2 = 0;
 
-    uint32_t i;
+    std::size_t i;
     for (i = 0; i < iter; i++) {
         zb = (2 * za * zb) + cb;
         za = (za2 - zb2) + ca;
@@ -105,18 +99,18 @@ uint32_t mandel_image::mandelbrot_check(double ca, double cb, uint32_t iter) {
 void mandel_image::populate_image(render_data render) {
     pixel_data.resize(width * height);
 
-    uint16_t x, y;
-    const double div = width / 4.0;
+    const double div = width / 4.0; // So that zoom of 1 corresponds to x range of -2 to 2
     const double width_sub = width / 2.0;
     const double height_sub = height / 2.0;
 
-    double ca, cb;
-    uint32_t i;
-    for(y = 0; y < height; y++) {
-        for(x = 0; x < width; x++) {
-            ca = (double)(x - width_sub) / (div * render.zoom) + render.a_centre; // Convert pixel coordinates onto complex plane (in a + bi)
-            cb = (double)(y - height_sub) / (div * render.zoom) + render.b_centre;
-            i = mandelbrot_check(ca, cb, render.iterations); // Check how many iterations until value blows up to infinity
+    double ca = 0, cb = 0;
+    for(std::size_t y = 0; y < height; y++) {
+        for(std::size_t x = 0; x < width; x++) {
+            // Convert pixel coordinates onto complex plane (in a + bi)
+            ca = static_cast<double> (x - width_sub) / (div * render.zoom) + render.a_centre;
+            cb = static_cast<double> (y - height_sub) / (div * render.zoom) + render.b_centre;
+            std::size_t i = mandelbrot_check(ca, cb, render.iterations); // Check how many iterations until value blows up to infinity
+
             if(i == render.iterations) {
                 pixel_data[coord_to_index(x,y)].red = 0;
                 pixel_data[coord_to_index(x,y)].green = 0;
@@ -124,9 +118,9 @@ void mandel_image::populate_image(render_data render) {
                 pixel_data[coord_to_index(x,y)].lum = 0; // Luminance
             }
             else {
-                pixel_data[coord_to_index(x,y)].red = (uint8_t)(((double)(242 - 11) / 19) * (i % 20) + 11); // Red - add colour based on iterations
-                pixel_data[coord_to_index(x,y)].green = (uint8_t)(((double)(154 - 41) / 19) * (i % 20) + 41); // Green - add colour based on iterations
-                pixel_data[coord_to_index(x,y)].blue = (uint8_t)(((double)(99 - 150) / 19) * (i % 20) + 150); // Blue - add colour based on iterations
+                pixel_data[coord_to_index(x,y)].red = (std::uint8_t)(((double)(242 - 11) / 19) * (i % 20) + 11); // Red - add colour based on iterations
+                pixel_data[coord_to_index(x,y)].green = (std::uint8_t)(((double)(154 - 41) / 19) * (i % 20) + 41); // Green - add colour based on iterations
+                pixel_data[coord_to_index(x,y)].blue = (std::uint8_t)(((double)(99 - 150) / 19) * (i % 20) + 150); // Blue - add colour based on iterations
                 pixel_data[coord_to_index(x,y)].lum = (pixel_data[coord_to_index(x,y)].red * 0.3) + (pixel_data[coord_to_index(x,y)].green * 0.59) + (pixel_data[coord_to_index(x,y)].blue * 0.11); // Luminance calculation
             }
         }
@@ -135,9 +129,9 @@ void mandel_image::populate_image(render_data render) {
 }
 
 void mandel_image::apply_fxaa() {
-    float blend_factor;
-    for(uint32_t y = 0; y < height; y++) {
-        for(uint32_t x = 0; x < width; x++) {
+    float blend_factor = 0;
+    for(std::size_t y = 0; y < height; y++) {
+        for(std::size_t x = 0; x < width; x++) {
             pixel_data[coord_to_index(x,y)].fxaa_red = pixel_data[coord_to_index(x,y)].red;
             pixel_data[coord_to_index(x,y)].fxaa_green = pixel_data[coord_to_index(x,y)].green;
             pixel_data[coord_to_index(x,y)].fxaa_blue = pixel_data[coord_to_index(x,y)].blue;
@@ -172,21 +166,32 @@ void mandel_image::apply_fxaa() {
 }
 
 void mandel_image::get_contr() {
-    for(uint32_t i = 0; i < pixel_data.size(); i++) {
-        uint8_t max_lum = 0, min_lum = 255;
-        uint8_t lum;
-        int16_t nx, ny;
-        uint32_t x, y;
-        for(int8_t dy = -1; dy <= 1; dy++) {
-            for(int8_t dx = -1; dx <= 1; dx++) {
-                if(dx != 0 && dy != 0) continue; // Skip pixel if diagonal to centre
+    for(std::size_t i = 0; i < pixel_data.size(); i++) {
+        std::uint8_t max_lum = 0, min_lum = 255;
+        std::uint8_t lum = 0;
+
+        std::size_t nx = 0, ny = 0;
+        std::size_t x = 0, y = 0;
+
+        for(std::int8_t dy = -1; dy <= 1; dy++) {
+            for(std::int8_t dx = -1; dx <= 1; dx++) {
+
+                if(dx != 0 && dy != 0) {
+                    continue; // Skip pixel if diagonal to centre
+                }
+
                 index_to_coord(i, x ,y);
                 nx = x + dx;
                 ny = y + dy;
+
                 if(nx >= 0 && nx < width && ny >= 0 && ny < height) { // Check for pixel not out of image bounds
                     lum = pixel_data[coord_to_index(nx,ny)].lum;
-                    if(lum > max_lum) max_lum = lum;
-                    if(lum < min_lum) min_lum = lum;
+                    if(lum > max_lum) {
+                        max_lum = lum;
+                    }
+                    if(lum < min_lum) {
+                        min_lum = lum;
+                    }
                 }
             }
         }
@@ -194,34 +199,44 @@ void mandel_image::get_contr() {
     }
 }
 
-float mandel_image::get_pix_blend_factor(uint32_t x, uint32_t y) {
+float mandel_image::get_pix_blend_factor(std::size_t x, std::size_t y) {
     float blend_factor = 0;
-    int16_t nx, ny;
-    for(int8_t dy = -1; dy <= 1; dy++) {
-        for(int8_t dx = -1; dx <= 1; dx++) {
+    std::size_t nx, ny;
+
+    for(std::int8_t dy = -1; dy <= 1; dy++) {
+        for(std::int8_t dx = -1; dx <= 1; dx++) {
             nx = x + dx;
             ny = y + dy;
+
             if(nx >= 0 && nx < width && ny >= 0 && ny < height) { // Check for pixel not out of image bounds
-                if(dx == 0 && dy == 0) continue;
-                else if(dx != 0 && dy != 0) blend_factor += pixel_data[coord_to_index(nx,ny)].lum; // Weighted average of neighboring pixels
-                else blend_factor += 2 * pixel_data[coord_to_index(nx,ny)].lum;
+                if(dx == 0 && dy == 0) {
+                    continue;
+                } else if(dx != 0 && dy != 0) {
+                    blend_factor += pixel_data[coord_to_index(nx,ny)].lum; // Weighted average of neighboring pixels
+                } else {
+                    blend_factor += 2 * pixel_data[coord_to_index(nx,ny)].lum;
+                }
             }
         }
     }
-    blend_factor *= 1.0/12;
+
+    blend_factor *= 1.0/12.0;
     blend_factor = fabsf(blend_factor - pixel_data[coord_to_index(x,y)].lum); // Find contrast between weighted average and middle pixel
-    if(pixel_data[coord_to_index(x,y)].contr == 0) return 0.0;
-    blend_factor = smoothstep((float) blend_factor / pixel_data[coord_to_index(x,y)].contr);
+
+    if(pixel_data[coord_to_index(x,y)].contr == 0) {
+        return 0.0;
+    }
+    blend_factor = smoothstep(blend_factor / pixel_data[coord_to_index(x,y)].contr);
     return blend_factor * blend_factor; // Squared smoothstep with clamping in 0-1
 }
 
-void mandel_image::get_edge_dir(uint32_t x, uint32_t y) {
-    bool is_horizontal;
-    uint8_t l[3][3] = {0};
+void mandel_image::get_edge_dir(std::size_t x, std::size_t y) {
+    bool is_horizontal = false;
+    std::uint8_t l[3][3] = {0};
 
-    int16_t nx, ny;
-    for(int8_t dy = -1; dy <= 1; dy++) {
-        for(int8_t dx = -1; dx <= 1; dx++) {
+    std::size_t nx, ny;
+    for(std::int8_t dy = -1; dy <= 1; dy++) {
+        for(std::int8_t dx = -1; dx <= 1; dx++) {
             nx = x + dx;
             ny = y + dy;
             if(nx >= 0 && nx < width && ny >= 0 && ny < height) { // Check for pixel not out of image bounds
@@ -242,14 +257,18 @@ void mandel_image::get_edge_dir(uint32_t x, uint32_t y) {
     
     is_horizontal = horizontal >= vertical;
 
-    if(is_horizontal) {
+    if (is_horizontal) {
         if(l[1][2] > l[1][0]) { // Check if ln is bigger than ls
             edge_sign = true;
-        } else edge_sign = false;
+        } else {
+            edge_sign = false;
+        }
     } else {
         if(l[2][1] > l[0][1]) { // Check if le is bigger than lw
             edge_sign = true;
-        } else edge_sign = false;
+        } else {
+            edge_sign = false;
+        }
     }
 
     edge_dir = is_horizontal;
