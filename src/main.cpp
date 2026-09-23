@@ -3,19 +3,20 @@
 #include <cmath>
 #include <string>
 #include <format>
-#include "renderFrame.hpp"
+
+#include "render_frame.hpp"
 
 int main(void) {
-    mandelImage image;
-    image.setWidth(1920);
-    image.setHeight(1080);
-    renderData render = {0};
+    mandel_image image;
+    image.set_width(1920);
+    image.set_height(1080);
+    render_data render = {0};
     render.iterations = 1000; // TODO: add iterations control
-    std::string fileName;
+    std::string file_name;
     uint32_t anim, frames;
     
     std::cout << "What are the coordinates of the point to centre on?\n";
-    while(!(std::cin >> render.aCentre >> render.bCentre).good()) {
+    while(!(std::cin >> render.a_centre >> render.b_centre).good()) {
         std::cout << "Incorrect formatting, retry\n";
         std::cin.clear();
         std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
@@ -38,7 +39,7 @@ int main(void) {
     switch (anim) {
     case 0:
         std::cout << "Generating image\n";
-        image.renderFrame("img.bmp", render);
+        image.render_frame("img.bmp", render);
         std::cout << "Image done\n";
         break;
     case 1:
@@ -51,11 +52,11 @@ int main(void) {
 
         for (int i = 0; i < frames; i++) {
             render.zoom = pow(2, (double)i / 30);
-            fileName.clear();
-            fileName = std::format("{}.bmp", i+1);
+            file_name.clear();
+            file_name = std::format("{}.bmp", i+1);
 
-            image.renderFrame(fileName, render);
-            std::cout << fileName << '\n';
+            image.render_frame(file_name, render);
+            std::cout << file_name << '\n';
         }
         break;
     }
