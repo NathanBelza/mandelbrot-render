@@ -7,4 +7,4 @@ set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
 
 include_directories(include)
 
-add_executable(mandelbrot_render src/main.cpp src/render_frame.cpp)
+add_executable(mandelbrot_render src/main.cpp src/render_frame.cpp src/image.cpp)
