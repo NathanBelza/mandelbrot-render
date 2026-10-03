@@ -23,7 +23,7 @@ std::size_t mandel_image::mandelbrot_check(double ca, double cb, std::size_t ite
     return i;
 }
 
-void mandel_image::populate_image(render_data render) {
+void mandel_image::mandelbrot_render(render_data render) {
     pixel_data.resize(get_width() * get_height());
 
     const double div = get_width() / 4.0; // So that zoom of 1 corresponds to x range of -2 to 2
@@ -38,25 +38,25 @@ void mandel_image::populate_image(render_data render) {
             cb = static_cast<double> (y - height_sub) / (div * render.zoom) + render.b_centre;
             std::size_t i = mandelbrot_check(ca, cb, render.iterations); // Check how many iterations until value blows up to infinity
 
+            // Pixel colouring logic
             if(i == render.iterations) {
                 pixel_data[coord_to_index(x,y)].red = 0;
                 pixel_data[coord_to_index(x,y)].green = 0;
                 pixel_data[coord_to_index(x,y)].blue = 0;
-                pixel_data[coord_to_index(x,y)].lum = 0; // Luminance
             }
             else {
                 pixel_data[coord_to_index(x,y)].red = (std::uint8_t)(((double)(242 - 11) / 19) * (i % 20) + 11); // Red - add colour based on iterations
                 pixel_data[coord_to_index(x,y)].green = (std::uint8_t)(((double)(154 - 41) / 19) * (i % 20) + 41); // Green - add colour based on iterations
                 pixel_data[coord_to_index(x,y)].blue = (std::uint8_t)(((double)(99 - 150) / 19) * (i % 20) + 150); // Blue - add colour based on iterations
-                pixel_data[coord_to_index(x,y)].lum = (pixel_data[coord_to_index(x,y)].red * 0.3) + (pixel_data[coord_to_index(x,y)].green * 0.59) + (pixel_data[coord_to_index(x,y)].blue * 0.11); // Luminance calculation
             }
         }
     }
-    get_contr();
+    
+    apply_fxaa();
 }
 
 
 void mandel_image::render_frame(std::string file_name, render_data render) {
-    populate_image(render);
+    mandelbrot_render(render);
     save_bmp(file_name);
 }

@@ -20,7 +20,7 @@ class mandel_image : public image {
     void render_frame(std::string file_name, render_data render);
 
     private:
-    void populate_image(render_data render);
+    void mandelbrot_render(render_data render);
     std::size_t mandelbrot_check(double ca, double cb, std::size_t iter);
 
 };

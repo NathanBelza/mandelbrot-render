@@ -58,9 +58,6 @@ std::int8_t image::save_bmp(std::string file_name) {
     bytes[0x2C] = print_res >> 16 & 0xFF;
     bytes[0x2D] = print_res >> 24 & 0xFF;
 
-    apply_fxaa();
-
-    // Need to make output two BMPs
     std::size_t indx = 54;
     for (std::size_t y = 0; y < height; y++) {
         for (std::size_t x = 0; x < width; x++) {
@@ -78,80 +75,64 @@ std::int8_t image::save_bmp(std::string file_name) {
 }
 
 
-void image::apply_fxaa() {
-    float blend_factor = 0;
-    for(std::size_t y = 0; y < height; y++) {
-        for(std::size_t x = 0; x < width; x++) {
-            pixel_data[coord_to_index(x,y)].fxaa_red = pixel_data[coord_to_index(x,y)].red;
-            pixel_data[coord_to_index(x,y)].fxaa_green = pixel_data[coord_to_index(x,y)].green;
-            pixel_data[coord_to_index(x,y)].fxaa_blue = pixel_data[coord_to_index(x,y)].blue;
+void image::get_contr() {
+    for (std::size_t y = 0; y < height; y++) {
+        for (std::size_t x = 0; x < width; x++) {
 
-            if(pixel_data[coord_to_index(x,y)].contr != 0) {
-                blend_factor = get_pix_blend_factor(x,y);
-                get_edge_dir(x,y);
-                if(edge_dir && edge_sign && y < height-1) { // Blend north
-                    pixel_data[coord_to_index(x,y)].fxaa_red = pixel_data[coord_to_index(x,y)].red * (1 - blend_factor) + pixel_data[coord_to_index(x,y+1)].red * blend_factor;
-                    pixel_data[coord_to_index(x,y)].fxaa_green = pixel_data[coord_to_index(x,y)].green * (1 - blend_factor) + pixel_data[coord_to_index(x,y+1)].green * blend_factor;
-                    pixel_data[coord_to_index(x,y)].fxaa_blue = pixel_data[coord_to_index(x,y)].blue * (1 - blend_factor) + pixel_data[coord_to_index(x,y+1)].blue * blend_factor;
-                } else if(edge_dir && !edge_sign && y > 0) { // Blend south
-                    pixel_data[coord_to_index(x,y)].fxaa_red = pixel_data[coord_to_index(x,y)].red * (1 - blend_factor) + pixel_data[coord_to_index(x,y-1)].red * blend_factor;
-                    pixel_data[coord_to_index(x,y)].fxaa_green = pixel_data[coord_to_index(x,y)].green * (1 - blend_factor) + pixel_data[coord_to_index(x,y-1)].green * blend_factor;
-                    pixel_data[coord_to_index(x,y)].fxaa_blue = pixel_data[coord_to_index(x,y)].blue * (1 - blend_factor) + pixel_data[coord_to_index(x,y-1)].blue * blend_factor;
-                } else if(!edge_dir && edge_sign && x < width-1) { // Blend east
-                    pixel_data[coord_to_index(x,y)].fxaa_red = pixel_data[coord_to_index(x,y)].red * (1 - blend_factor) + pixel_data[coord_to_index(x+1,y)].red * blend_factor;
-                    pixel_data[coord_to_index(x,y)].fxaa_green = pixel_data[coord_to_index(x,y)].green * (1 - blend_factor) + pixel_data[coord_to_index(x+1,y)].green * blend_factor;
-                    pixel_data[coord_to_index(x,y)].fxaa_blue = pixel_data[coord_to_index(x,y)].blue * (1 - blend_factor) + pixel_data[coord_to_index(x+1,y)].blue * blend_factor;
-                } else if(!edge_dir && !edge_sign && x > 0) { // Blend west
-                    pixel_data[coord_to_index(x,y)].fxaa_red = pixel_data[coord_to_index(x,y)].red * (1 - blend_factor) + pixel_data[coord_to_index(x-1,y)].red * blend_factor;
-                    pixel_data[coord_to_index(x,y)].fxaa_green = pixel_data[coord_to_index(x,y)].green * (1 - blend_factor) + pixel_data[coord_to_index(x-1,y)].green * blend_factor;
-                    pixel_data[coord_to_index(x,y)].fxaa_blue = pixel_data[coord_to_index(x,y)].blue * (1 - blend_factor) + pixel_data[coord_to_index(x-1,y)].blue * blend_factor;
-                } else {
-                    pixel_data[coord_to_index(x,y)].fxaa_red = pixel_data[coord_to_index(x,y)].red;
-                    pixel_data[coord_to_index(x,y)].fxaa_green = pixel_data[coord_to_index(x,y)].green;
-                    pixel_data[coord_to_index(x,y)].fxaa_blue = pixel_data[coord_to_index(x,y)].blue;
-                }
+            std::uint8_t c = pixel_data[coord_to_index(x, y)].lum;
+            std::uint8_t min_lum = c, max_lum = c;
+
+            static constexpr std::pair<int,int> offsets[] = {{1,0},{-1,0},{0,1},{0,-1}};
+            for (auto [dx, dy] : offsets) {
+                std::uint8_t l = pixel_data[coord_to_index(x + dx, y + dy)].lum;
+                min_lum = std::min(min_lum, l);
+                max_lum = std::max(max_lum, l);
             }
+
+            pixel_data[x + width * y].contr = max_lum - min_lum;
         }
     }
 }
 
 
-void image::get_contr() {
-    for(std::size_t i = 0; i < pixel_data.size(); i++) {
-        std::uint8_t max_lum = 0, min_lum = 255;
-        std::uint8_t lum = 0;
-
-        std::size_t nx = 0, ny = 0;
-        std::size_t x = 0, y = 0;
-
-        for(std::int8_t dy = -1; dy <= 1; dy++) {
-            for(std::int8_t dx = -1; dx <= 1; dx++) {
-
-                if(dx != 0 && dy != 0) {
-                    continue; // Skip pixel if diagonal to centre
-                }
-
-                index_to_coord(i, x ,y);
-                nx = x + dx;
-                ny = y + dy;
-
-                if(nx >= 0 && nx < width && ny >= 0 && ny < height) { // Check for pixel not out of image bounds
-                    lum = pixel_data[coord_to_index(nx,ny)].lum;
-                    if(lum > max_lum) {
-                        max_lum = lum;
-                    }
-                    if(lum < min_lum) {
-                        min_lum = lum;
-                    }
-                }
-            }
+void image::apply_fxaa() {
+    for (std::size_t y = 0; y < height; y++) {
+        for (std::size_t x = 0; x < width; x++) {
+            pixel& p = pixel_data[coord_to_index(x,y)];
+            p.lum = (p.red * 0.3) + (p.green * 0.59) + (p.blue * 0.11); // Luminance calculation
         }
-        pixel_data[coord_to_index(x,y)].contr = max_lum - min_lum;
+    }
+
+    get_contr();
+
+    for(std::size_t y = 0; y < height; y++) {
+        for(std::size_t x = 0; x < width; x++) {
+            pixel& p = pixel_data[coord_to_index(x,y)];
+            p.fxaa_red = p.red;
+            p.fxaa_green = p.green;
+            p.fxaa_blue = p.blue;
+
+            if (p.contr < contrast_threshold) {
+                continue;
+            }
+
+            float blend_factor = get_pix_blend_factor(x,y);
+            edge e = get_edge_dir(x,y);
+
+            std::int8_t step = e.is_positive ? 1 : -1;
+            const pixel& n = pixel_data[coord_to_index(x + (e.is_horizontal ? 0 : step), y + (e.is_horizontal ? step : 0))];
+
+            // blend pixel across edge direction
+            p.fxaa_red = static_cast<std::uint8_t> (std::round(p.red + (n.red - p.red) * blend_factor));
+            p.fxaa_green = static_cast<std::uint8_t> (std::round(p.green + (n.green - p.green) * blend_factor));
+            p.fxaa_blue = static_cast<std::uint8_t> (std::round(p.blue + (n.blue - p.blue) * blend_factor));
+        }
     }
 }
 
 
 float image::get_pix_blend_factor(std::size_t x, std::size_t y) {
+
     float blend_factor = 0;
     std::size_t nx, ny;
 
@@ -160,7 +141,7 @@ float image::get_pix_blend_factor(std::size_t x, std::size_t y) {
             nx = x + dx;
             ny = y + dy;
 
-            if(nx >= 0 && nx < width && ny >= 0 && ny < height) { // Check for pixel not out of image bounds
+            if(nx < width && ny < height) { // Check for pixel not out of image bounds
                 if(dx == 0 && dy == 0) {
                     continue;
                 } else if(dx != 0 && dy != 0) {
@@ -183,8 +164,8 @@ float image::get_pix_blend_factor(std::size_t x, std::size_t y) {
 }
 
 
-void image::get_edge_dir(std::size_t x, std::size_t y) {
-    bool is_horizontal = false;
+edge image::get_edge_dir(std::size_t x, std::size_t y) {
+    edge e = {0};
     std::uint8_t l[3][3] = {0};
 
     std::size_t nx, ny;
@@ -192,7 +173,7 @@ void image::get_edge_dir(std::size_t x, std::size_t y) {
         for(std::int8_t dx = -1; dx <= 1; dx++) {
             nx = x + dx;
             ny = y + dy;
-            if(nx >= 0 && nx < width && ny >= 0 && ny < height) { // Check for pixel not out of image bounds
+            if(nx < width && ny < height) { // Check for pixel not out of image bounds
                 l[dx+1][dy+1] = pixel_data[coord_to_index(nx,ny)].lum;
             }
         }
@@ -208,21 +189,15 @@ void image::get_edge_dir(std::size_t x, std::size_t y) {
     abs(l[2][2] + l[0][2] - 2 * l[1][2]) + //lne + lnw - 2ln
     abs(l[2][0] + l[0][0] - 2 * l[1][0]); //lse + lsw - 2ls
     
-    is_horizontal = horizontal >= vertical;
+    e.is_horizontal = horizontal >= vertical;
 
-    if (is_horizontal) {
-        if(l[1][2] > l[1][0]) { // Check if ln is bigger than ls
-            edge_sign = true;
-        } else {
-            edge_sign = false;
-        }
+    if (e.is_horizontal) {
+        // Check if ln is bigger than ls
+        e.is_positive = std::abs(l[1][2] - l[1][1]) >= std::abs(l[1][0] - l[1][1]);
     } else {
-        if(l[2][1] > l[0][1]) { // Check if le is bigger than lw
-            edge_sign = true;
-        } else {
-            edge_sign = false;
-        }
+        // Check if le is bigger than lw
+        e.is_positive = std::abs(l[2][1] - l[1][1]) >= std::abs(l[0][1] - l[1][1]);
     }
 
-    edge_dir = is_horizontal;
+    return e;
 }

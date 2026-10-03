@@ -3,9 +3,15 @@
 #include <cstdint>
 #include <vector>
 #include <string>
+#include <algorithm>
 
-#define print_res 2835
-#define contrast_threshold 16
+constexpr std::uint32_t print_res = 2835;
+constexpr std::uint8_t contrast_threshold = 16;
+
+struct edge {
+    bool is_horizontal;
+    bool is_positive;
+};
 
 struct pixel {
     std::uint8_t red;
@@ -25,11 +31,10 @@ class image {
     private:
     std::uint32_t width;
     std::uint32_t height;
-    bool edge_dir, edge_sign;
-
 
     public:
     std::int8_t save_bmp(std::string file_name);
+    void apply_fxaa();
 
     // image height and width
     void set_width(std::uint32_t new_width) {
@@ -45,20 +50,17 @@ class image {
         return height;
     }
 
+    protected:
     // indexing
-    void index_to_coord(std::size_t index, std::size_t& x, std::size_t& y) {
-        x = index % width;
-        y = (index - x) / width;
-    }
-    std::size_t coord_to_index(std::size_t x, std::size_t y) {
+    std::size_t coord_to_index(std::ptrdiff_t x, std::ptrdiff_t y) const {
+        x = std::clamp<std::ptrdiff_t> (x, 0, width - 1);
+        y = std::clamp<std::ptrdiff_t> (y, 0, height - 1);
         return x + width * y;
     }
 
-    void apply_fxaa();
-
     void get_contr();
     float get_pix_blend_factor(std::size_t x, std::size_t y);
-    void get_edge_dir(std::size_t x, std::size_t y);
+    edge get_edge_dir(std::size_t x, std::size_t y);
 
     private:
     float smoothstep(float a) {
