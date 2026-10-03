@@ -4,7 +4,7 @@
 #include <string>
 #include <format>
 
-#include "render_frame.hpp"
+#include "mandelbrot.hpp"
 
 std::int32_t main(void) {
     mandel_image image;
@@ -39,7 +39,7 @@ std::int32_t main(void) {
     switch (anim) {
     case 0:
         std::cout << "Generating image\n";
-        image.render_frame("img.bmp", render);
+        image.render("img.bmp", render, JULIA);
         std::cout << "Image done\n";
         break;
     case 1:
@@ -55,7 +55,7 @@ std::int32_t main(void) {
             file_name.clear();
             file_name = std::format("{}.bmp", i+1);
 
-            image.render_frame(file_name, render);
+            image.render(file_name, render, JULIA);
             std::cout << file_name << '\n';
         }
         break;
