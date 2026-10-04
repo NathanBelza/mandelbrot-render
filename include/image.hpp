@@ -19,11 +19,12 @@ struct pixel {
     std::uint8_t red;
     std::uint8_t green;
     std::uint8_t blue;
+};
 
-    std::uint8_t fxaa_red;
-    std::uint8_t fxaa_green;
-    std::uint8_t fxaa_blue;
-
+struct fxaa_pixel {
+    std::uint8_t red;
+    std::uint8_t green;
+    std::uint8_t blue;
     std::uint8_t lum;
     std::uint8_t contr;
 };
@@ -39,6 +40,7 @@ class image {
     std::vector<pixel> pixel_data;
 
     private:
+    std::vector<fxaa_pixel> fxaa_pixel_data;
     std::uint32_t width;
     std::uint32_t height;
 

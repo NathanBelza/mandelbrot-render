@@ -11,7 +11,7 @@ std::size_t mandel_image::mandelbrot_check(double ca, double cb, std::size_t ite
 
     std::size_t i = 0;
     for (i = 0; i < iter; i++) {
-        if (za2 + zb2 > 4) {
+        if (za2 + zb2 > 4) { // Point is guarunteed not in set when magnitude greater than 2
             break;
         }
 
@@ -31,7 +31,7 @@ std::size_t mandel_image::julia_check(double za, double zb, double ca, double cb
 
     std::size_t i = 0;
     for (i = 0; i < iter; i++) {
-        if (za2 + zb2 > 4) {
+        if (za2 + zb2 > 4) { // Point is guarunteed not in set when magnitude greater than 2
             break;
         }
 
@@ -51,10 +51,21 @@ static void colour_iterations(std::size_t iterations, std::size_t max_iter, imag
         p.green = 0;
         p.blue = 0;
     } else {
-        // Colour based on iterations, repeat using modulo
-        p.red = (std::uint8_t)(((double)(242 - 11) / 19) * (iterations % 20) + 11);
-        p.green = (std::uint8_t)(((double)(154 - 41) / 19) * (iterations % 20) + 41);
-        p.blue = (std::uint8_t)(((double)(99 - 150) / 19) * (iterations % 20) + 150);
+        // Colour based on iterations, repeat using modulo, blend between C1 and C2
+        constexpr std::uint8_t C1_RED = 11;
+        constexpr std::uint8_t C1_GREEN = 41;
+        constexpr std::uint8_t C1_BLUE = 150;
+
+        constexpr std::uint8_t C2_RED = 242;
+        constexpr std::uint8_t C2_GREEN = 154;
+        constexpr std::uint8_t C2_BLUE = 99;
+
+        constexpr std::size_t repeat_i = 20;
+        static_assert(repeat_i > 0);
+
+        p.red = (std::uint8_t)(((double)(C2_RED - C1_RED) / (repeat_i - 1)) * (iterations % repeat_i) + C1_RED);
+        p.green = (std::uint8_t)(((double)(C2_GREEN - C1_GREEN) / (repeat_i - 1)) * (iterations % repeat_i) + C1_GREEN);
+        p.blue = (std::uint8_t)(((double)(C2_BLUE - C1_BLUE) / (repeat_i - 1)) * (iterations % repeat_i) + C1_BLUE);
     }
 }
 
@@ -64,7 +75,7 @@ void mandel_image::mandelbrot_render(const render_data &render) {
     pixel_data.resize(width * height);
 
     const double div = width / 4.0; // So that zoom of 1 corresponds to x range of -2 to 2
-    const double width_sub = width / 2.0;
+    const double width_sub = width / 2.0; // Put centre of screen at half of width and height
     const double height_sub = height / 2.0;
 
     for(std::size_t y = 0; y < height; y++) {
@@ -89,7 +100,7 @@ void mandel_image::julia_render(const render_data &render) {
     pixel_data.resize(width * height);
 
     const double div = width / 4.0; // So that zoom of 1 corresponds to x range of -2 to 2
-    const double width_sub = width / 2.0;
+    const double width_sub = width / 2.0; // Put centre of screen at half of width and height
     const double height_sub = height / 2.0;
 
     for(std::size_t y = 0; y < height; y++) {

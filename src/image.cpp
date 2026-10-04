@@ -63,10 +63,10 @@ error image::save_bmp(const std::string &file_name) {
     std::size_t index = 54;
     for (std::size_t y = 0; y < height; y++) {
         for (std::size_t x = 0; x < width; x++) {
-            pixel& p = pixel_data[coord_to_index(x,y)];
-            bytes[index++] = p.fxaa_blue;
-            bytes[index++] = p.fxaa_green;
-            bytes[index++] = p.fxaa_red;
+            const pixel& p = pixel_data[coord_to_index(x,y)];
+            bytes[index++] = p.blue;
+            bytes[index++] = p.green;
+            bytes[index++] = p.red;
         }
         for(std::uint8_t pad = 0; pad < row_bytes - get_width() * 3; pad++) {
             bytes[index++] = 0x00; // Make sure rows have a multiple of 4 bytes
@@ -85,27 +85,30 @@ void image::get_contr() {
     for (std::size_t y = 0; y < height; y++) {
         for (std::size_t x = 0; x < width; x++) {
 
-            std::uint8_t lum = pixel_data[coord_to_index(x, y)].lum;
+            std::uint8_t lum = fxaa_pixel_data[coord_to_index(x, y)].lum;
             std::uint8_t min_lum = lum, max_lum = lum;
 
             static constexpr std::pair<int,int> offsets[] = {{1,0},{-1,0},{0,1},{0,-1}};
             for (auto [dx, dy] : offsets) {
-                std::uint8_t l = pixel_data[coord_to_index(x + dx, y + dy)].lum;
+                std::uint8_t l = fxaa_pixel_data[coord_to_index(x + dx, y + dy)].lum;
                 min_lum = std::min(min_lum, l);
                 max_lum = std::max(max_lum, l);
             }
 
-            pixel_data[x + width * y].contr = max_lum - min_lum;
+            fxaa_pixel_data[x + width * y].contr = max_lum - min_lum;
         }
     }
 }
 
 
 void image::apply_fxaa() {
+    fxaa_pixel_data.resize(pixel_data.size());
+
     for (std::size_t y = 0; y < height; y++) {
         for (std::size_t x = 0; x < width; x++) {
             pixel& p = pixel_data[coord_to_index(x,y)];
-            p.lum = (p.red * 0.3) + (p.green * 0.59) + (p.blue * 0.11); // Luminance calculation
+            fxaa_pixel& fp = fxaa_pixel_data[coord_to_index(x,y)];
+            fp.lum = (p.red * 0.3) + (p.green * 0.59) + (p.blue * 0.11); // Luminance calculation
         }
     }
 
@@ -114,11 +117,12 @@ void image::apply_fxaa() {
     for(std::size_t y = 0; y < height; y++) {
         for(std::size_t x = 0; x < width; x++) {
             pixel& p = pixel_data[coord_to_index(x,y)];
-            p.fxaa_red = p.red;
-            p.fxaa_green = p.green;
-            p.fxaa_blue = p.blue;
+            fxaa_pixel& fp = fxaa_pixel_data[coord_to_index(x,y)];
+            fp.red = p.red;
+            fp.green = p.green;
+            fp.blue = p.blue;
 
-            if (p.contr < contrast_threshold) {
+            if (fp.contr < contrast_threshold) {
                 continue;
             }
 
@@ -129,45 +133,50 @@ void image::apply_fxaa() {
             const pixel& n = pixel_data[coord_to_index(x + (e.is_horizontal ? 0 : step), y + (e.is_horizontal ? step : 0))];
 
             // blend pixel across edge direction
-            p.fxaa_red = static_cast<std::uint8_t> (std::round(p.red + (n.red - p.red) * blend_factor));
-            p.fxaa_green = static_cast<std::uint8_t> (std::round(p.green + (n.green - p.green) * blend_factor));
-            p.fxaa_blue = static_cast<std::uint8_t> (std::round(p.blue + (n.blue - p.blue) * blend_factor));
+            fp.red = static_cast<std::uint8_t> (std::round(p.red + (n.red - p.red) * blend_factor));
+            fp.green = static_cast<std::uint8_t> (std::round(p.green + (n.green - p.green) * blend_factor));
+            fp.blue = static_cast<std::uint8_t> (std::round(p.blue + (n.blue - p.blue) * blend_factor));
         }
+    }
+
+    for (std::size_t i = 0; i < width * height; i++) {
+        pixel_data[i].red = fxaa_pixel_data[i].red;
+        pixel_data[i].green = fxaa_pixel_data[i].green;
+        pixel_data[i].blue = fxaa_pixel_data[i].blue;
     }
 }
 
 static float smoothstep(float x) {
-    float smooth_x = 3 * (x * x) - 2 * (x * x * x);
-    return std::clamp<float>(smooth_x, 0.0f, 1.0f);
+    x = std::clamp(x, 0.0f, 1.0f);
+    return 3 * (x * x) - 2 * (x * x * x);
 }
 
 float image::get_pix_blend_factor(std::uint32_t x, std::uint32_t y) {
+    if (fxaa_pixel_data[coord_to_index(x,y)].contr == 0) {
+        return 0.0;
+    }
 
     float blend_factor = 0;
-    std::size_t nx, ny; // neighbours
 
     for (std::int8_t dy = -1; dy <= 1; dy++) {
         for (std::int8_t dx = -1; dx <= 1; dx++) {
-            nx = x + dx;
-            ny = y + dy;
+            std::int64_t nx = static_cast<std::int64_t>(x) + dx;
+            std::int64_t ny = static_cast<std::int64_t>(y) + dy;
 
             if (dx == 0 && dy == 0) {
                 continue;
             } else if (dx != 0 && dy != 0) {
-                blend_factor += pixel_data[coord_to_index(nx,ny)].lum; // Weighted average of neighboring pixels
+                blend_factor += fxaa_pixel_data[coord_to_index(nx,ny)].lum; // Weighted average of neighboring pixels
             } else {
-                blend_factor += 2 * pixel_data[coord_to_index(nx,ny)].lum;
+                blend_factor += 2 * fxaa_pixel_data[coord_to_index(nx,ny)].lum;
             }
         }
     }
 
     blend_factor *= 1.0/12.0;
-    blend_factor = fabsf(blend_factor - pixel_data[coord_to_index(x,y)].lum); // Find contrast between weighted average and middle pixel
+    blend_factor = std::fabsf(blend_factor - fxaa_pixel_data[coord_to_index(x,y)].lum); // Find contrast between weighted average and middle pixel
 
-    if(pixel_data[coord_to_index(x,y)].contr == 0) {
-        return 0.0;
-    }
-    blend_factor = smoothstep(blend_factor / pixel_data[coord_to_index(x,y)].contr);
+    blend_factor = smoothstep(blend_factor / fxaa_pixel_data[coord_to_index(x,y)].contr);
     return blend_factor * blend_factor; // Squared smoothstep with clamping in 0-1
 }
 
@@ -176,25 +185,24 @@ edge image::get_edge_dir(std::uint32_t x, std::uint32_t y) {
     edge e = {0};
     std::uint8_t l[3][3] = {0};
 
-    std::size_t nx, ny; // neighbours
     for(std::int8_t dy = -1; dy <= 1; dy++) {
         for(std::int8_t dx = -1; dx <= 1; dx++) {
-            nx = x + dx;
-            ny = y + dy;
+            std::int64_t nx = static_cast<std::int64_t>(x) + dx;
+            std::int64_t ny = static_cast<std::int64_t>(y) + dy;
             
-            l[dx+1][dy+1] = pixel_data[coord_to_index(nx,ny)].lum;
+            l[dx+1][dy+1] = fxaa_pixel_data[coord_to_index(nx,ny)].lum;
         }
     }
 
     float horizontal =
-    abs(l[1][2] + l[1][0] - 2 * l[1][1]) * 2 + //ln + ls - 2lm
-    abs(l[2][2] + l[2][0] - 2 * l[2][1]) + //lne + lse - 2le
-    abs(l[0][2] + l[0][0] - 2 * l[0][1]); //lnw + lsw - 2lw
+    std::abs(l[1][2] + l[1][0] - 2 * l[1][1]) * 2 + //ln + ls - 2lm
+    std::abs(l[2][2] + l[2][0] - 2 * l[2][1]) + //lne + lse - 2le
+    std::abs(l[0][2] + l[0][0] - 2 * l[0][1]); //lnw + lsw - 2lw
 
     float vertical =
-    abs(l[2][1] + l[0][1] - 2 * l[1][1]) * 2 + //le + lw - 2lm
-    abs(l[2][2] + l[0][2] - 2 * l[1][2]) + //lne + lnw - 2ln
-    abs(l[2][0] + l[0][0] - 2 * l[1][0]); //lse + lsw - 2ls
+    std::abs(l[2][1] + l[0][1] - 2 * l[1][1]) * 2 + //le + lw - 2lm
+    std::abs(l[2][2] + l[0][2] - 2 * l[1][2]) + //lne + lnw - 2ln
+    std::abs(l[2][0] + l[0][0] - 2 * l[1][0]); //lse + lsw - 2ls
     
     e.is_horizontal = horizontal >= vertical;
 
