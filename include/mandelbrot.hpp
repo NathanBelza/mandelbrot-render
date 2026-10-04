@@ -13,12 +13,14 @@ struct render_data {
     std::size_t iterations;
 };
 
-enum render_type {
+enum class render_type {
     MANDELBROT,
     JULIA,
 };
 
 class mandel_image : public image {
+    using image::image;
+
     public:
     void render(const std::string &file_name, const render_data &render, render_type type);
 

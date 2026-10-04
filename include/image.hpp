@@ -33,34 +33,40 @@ class image {
     std::uint32_t height;
 
     public:
+    image(std::uint32_t p_width, std::uint32_t p_height):
+        width(p_width),
+        height(p_height)
+    {
+        pixel_data.resize(width * height);
+    }
+    
     std::int8_t save_bmp(std::string file_name);
     void apply_fxaa();
 
     // image height and width
-    void set_width(std::uint32_t new_width) {
-        width = new_width;
+    void set_size(std::uint32_t p_width, std::uint32_t p_height) {
+        width = p_width;
+        height = p_height;
+        pixel_data.resize(width * height);
     }
-    void set_height(std::uint32_t new_height) {
-        height = new_height;
-    }
-    std::uint32_t get_width() {
+    std::uint32_t get_width() const {
         return width;
     }
-    std::uint32_t get_height() {
+    std::uint32_t get_height() const {
         return height;
     }
 
     protected:
     // indexing
-    std::size_t coord_to_index(std::ptrdiff_t x, std::ptrdiff_t y) const {
-        x = std::clamp<std::ptrdiff_t> (x, 0, width - 1);
-        y = std::clamp<std::ptrdiff_t> (y, 0, height - 1);
+    std::size_t coord_to_index(std::int64_t x, std::int64_t y) const {
+        x = std::clamp<std::int64_t> (x, 0, static_cast<std::int64_t>(width) - 1); // Ensure casting unsigned to signed does not overflow
+        y = std::clamp<std::int64_t> (y, 0, static_cast<std::int64_t>(height) - 1);
         return x + width * y;
     }
 
     void get_contr();
-    float get_pix_blend_factor(std::size_t x, std::size_t y);
-    edge get_edge_dir(std::size_t x, std::size_t y);
+    float get_pix_blend_factor(std::uint32_t x, std::uint32_t y);
+    edge get_edge_dir(std::uint32_t x, std::uint32_t y);
 
     private:
     float smoothstep(float a) {
@@ -72,6 +78,4 @@ class image {
             return 3 * a * a - 2 * a * a * a;
         }
     }
-
-
 };

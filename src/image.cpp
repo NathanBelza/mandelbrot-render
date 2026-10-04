@@ -79,8 +79,8 @@ void image::get_contr() {
     for (std::size_t y = 0; y < height; y++) {
         for (std::size_t x = 0; x < width; x++) {
 
-            std::uint8_t c = pixel_data[coord_to_index(x, y)].lum;
-            std::uint8_t min_lum = c, max_lum = c;
+            std::uint8_t lum = pixel_data[coord_to_index(x, y)].lum;
+            std::uint8_t min_lum = lum, max_lum = lum;
 
             static constexpr std::pair<int,int> offsets[] = {{1,0},{-1,0},{0,1},{0,-1}};
             for (auto [dx, dy] : offsets) {
@@ -131,24 +131,22 @@ void image::apply_fxaa() {
 }
 
 
-float image::get_pix_blend_factor(std::size_t x, std::size_t y) {
+float image::get_pix_blend_factor(std::uint32_t x, std::uint32_t y) {
 
     float blend_factor = 0;
-    std::size_t nx, ny;
+    std::size_t nx, ny; // neighbours
 
-    for(std::int8_t dy = -1; dy <= 1; dy++) {
-        for(std::int8_t dx = -1; dx <= 1; dx++) {
+    for (std::int8_t dy = -1; dy <= 1; dy++) {
+        for (std::int8_t dx = -1; dx <= 1; dx++) {
             nx = x + dx;
             ny = y + dy;
 
-            if(nx < width && ny < height) { // Check for pixel not out of image bounds
-                if(dx == 0 && dy == 0) {
-                    continue;
-                } else if(dx != 0 && dy != 0) {
-                    blend_factor += pixel_data[coord_to_index(nx,ny)].lum; // Weighted average of neighboring pixels
-                } else {
-                    blend_factor += 2 * pixel_data[coord_to_index(nx,ny)].lum;
-                }
+            if (dx == 0 && dy == 0) {
+                continue;
+            } else if (dx != 0 && dy != 0) {
+                blend_factor += pixel_data[coord_to_index(nx,ny)].lum; // Weighted average of neighboring pixels
+            } else {
+                blend_factor += 2 * pixel_data[coord_to_index(nx,ny)].lum;
             }
         }
     }
@@ -164,18 +162,17 @@ float image::get_pix_blend_factor(std::size_t x, std::size_t y) {
 }
 
 
-edge image::get_edge_dir(std::size_t x, std::size_t y) {
+edge image::get_edge_dir(std::uint32_t x, std::uint32_t y) {
     edge e = {0};
     std::uint8_t l[3][3] = {0};
 
-    std::size_t nx, ny;
+    std::size_t nx, ny; // neighbours
     for(std::int8_t dy = -1; dy <= 1; dy++) {
         for(std::int8_t dx = -1; dx <= 1; dx++) {
             nx = x + dx;
             ny = y + dy;
-            if(nx < width && ny < height) { // Check for pixel not out of image bounds
-                l[dx+1][dy+1] = pixel_data[coord_to_index(nx,ny)].lum;
-            }
+            
+            l[dx+1][dy+1] = pixel_data[coord_to_index(nx,ny)].lum;
         }
     }
 

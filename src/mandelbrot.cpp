@@ -66,12 +66,11 @@ void mandel_image::mandelbrot_render(const render_data &render) {
     const double width_sub = width / 2.0;
     const double height_sub = height / 2.0;
 
-    double ca = 0, cb = 0;
     for(std::size_t y = 0; y < height; y++) {
         for(std::size_t x = 0; x < width; x++) {
             // Convert pixel coordinates onto complex plane (in a + bi)
-            ca = (static_cast<double>(x) - width_sub) / (div * render.zoom) + render.a_centre;
-            cb = (static_cast<double>(y) - height_sub) / (div * render.zoom) + render.b_centre;
+            double ca = (static_cast<double>(x) - width_sub) / (div * render.zoom) + render.a_centre;
+            double cb = (static_cast<double>(y) - height_sub) / (div * render.zoom) + render.b_centre;
             std::size_t i = mandelbrot_check(ca, cb, render.iterations); // Check how many iterations until value blows up to infinity
 
             pixel& p = pixel_data[coord_to_index(x,y)];
@@ -92,12 +91,11 @@ void mandel_image::julia_render(const render_data &render) {
     const double width_sub = width / 2.0;
     const double height_sub = height / 2.0;
 
-    double za = 0, zb = 0;
     for(std::size_t y = 0; y < height; y++) {
         for(std::size_t x = 0; x < width; x++) {
             // Convert pixel coordinates onto complex plane (in a + bi)
-            za = (static_cast<double>(x) - width_sub) / (div * render.zoom);
-            zb = (static_cast<double>(y) - height_sub) / (div * render.zoom);
+            double za = (static_cast<double>(x) - width_sub) / (div * render.zoom);
+            double zb = (static_cast<double>(y) - height_sub) / (div * render.zoom);
             std::size_t i = julia_check(za, zb, render.a_centre, render.b_centre, render.iterations); // Check how many iterations until value blows up to infinity
 
             pixel& p = pixel_data[coord_to_index(x,y)];
@@ -111,10 +109,10 @@ void mandel_image::julia_render(const render_data &render) {
 
 void mandel_image::render(const std::string &file_name, const render_data &render, render_type type) {
     switch (type) {
-    case MANDELBROT:
+    case render_type::MANDELBROT:
         mandelbrot_render(render);
         break;
-    case JULIA:
+    case render_type::JULIA:
         julia_render(render);
         break;
     }
