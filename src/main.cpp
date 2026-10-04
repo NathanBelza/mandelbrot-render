@@ -7,10 +7,10 @@
 #include "mandelbrot.hpp"
 
 std::int32_t main(int argc, char* argv[]) {
-    mandel_image image(1920, 1080);
+    mandel::mandel_image image(1920, 1080);
 
-    render_data render = {0};
-    render_type type = render_type::MANDELBROT;
+    mandel::render_data render = {0};
+    mandel::render_type type = mandel::render_type::MANDELBROT;
     render.iterations = 1000;
     std::string file_name = "img";
     std::uint32_t anim, frames;
@@ -31,9 +31,9 @@ std::int32_t main(int argc, char* argv[]) {
         std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
     }
     if (type_temp == 0) {
-        type = render_type::MANDELBROT;
+        type = mandel::render_type::MANDELBROT;
     } else {
-        type = render_type::JULIA;
+        type = mandel::render_type::JULIA;
     }
 
     std::cout << "What zoom level?\n";

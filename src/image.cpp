@@ -3,15 +3,17 @@
 #include <string>
 #include <fstream>
 #include <cmath>
+#include <utility>
 
 #include "image.hpp"
 
+namespace images {
 
-std::int8_t image::save_bmp(std::string file_name) {
+error image::save_bmp(const std::string &file_name) {
 
     std::ofstream file(file_name, std::ios::binary);
     if(!file) {
-        return -1;
+        return error::FILE_ERR;
     }
 
     const std::size_t row_bytes = ((3 * width + 3) / 4) * 4; // 3 bytes per pixel + ensure multiple of 4 bytes
@@ -58,20 +60,24 @@ std::int8_t image::save_bmp(std::string file_name) {
     bytes[0x2C] = print_res >> 16 & 0xFF;
     bytes[0x2D] = print_res >> 24 & 0xFF;
 
-    std::size_t indx = 54;
+    std::size_t index = 54;
     for (std::size_t y = 0; y < height; y++) {
         for (std::size_t x = 0; x < width; x++) {
-            bytes[indx++] = pixel_data[coord_to_index(x,y)].fxaa_blue;
-            bytes[indx++] = pixel_data[coord_to_index(x,y)].fxaa_green;
-            bytes[indx++] = pixel_data[coord_to_index(x,y)].fxaa_red;
+            pixel& p = pixel_data[coord_to_index(x,y)];
+            bytes[index++] = p.fxaa_blue;
+            bytes[index++] = p.fxaa_green;
+            bytes[index++] = p.fxaa_red;
         }
         for(std::uint8_t pad = 0; pad < row_bytes - get_width() * 3; pad++) {
-            bytes[indx++] = 0x00; // Make sure rows have a multiple of 4 bytes
+            bytes[index++] = 0x00; // Make sure rows have a multiple of 4 bytes
         }
     }
     
     file.write(reinterpret_cast<const char *> (bytes.data()), bytes.size());
-    return 0;
+    if (file.fail()) {
+        return error::FILE_ERR;
+    }
+    return error::OK;
 }
 
 
@@ -130,6 +136,10 @@ void image::apply_fxaa() {
     }
 }
 
+static float smoothstep(float x) {
+    float smooth_x = 3 * (x * x) - 2 * (x * x * x);
+    return std::clamp<float>(smooth_x, 0.0f, 1.0f);
+}
 
 float image::get_pix_blend_factor(std::uint32_t x, std::uint32_t y) {
 
@@ -197,4 +207,6 @@ edge image::get_edge_dir(std::uint32_t x, std::uint32_t y) {
     }
 
     return e;
+}
+
 }

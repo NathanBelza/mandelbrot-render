@@ -5,6 +5,7 @@
 
 #include "image.hpp"
 
+namespace mandel {
 
 struct render_data {
     double a_centre;
@@ -18,8 +19,8 @@ enum class render_type {
     JULIA,
 };
 
-class mandel_image : public image {
-    using image::image;
+class mandel_image : public images::image {
+    using images::image::image;
 
     public:
     void render(const std::string &file_name, const render_data &render, render_type type);
@@ -31,3 +32,5 @@ class mandel_image : public image {
     std::size_t mandelbrot_check(double ca, double cb, std::size_t iter);
     std::size_t julia_check(double za, double zb, double ca, double cb, std::size_t iter);
 };
+
+}

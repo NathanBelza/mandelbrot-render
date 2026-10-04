@@ -3,6 +3,7 @@
 
 #include "mandelbrot.hpp"
 
+namespace mandel {
 
 // check if a point is in the mandelbrot set, returns number of iterations until divergence
 std::size_t mandel_image::mandelbrot_check(double ca, double cb, std::size_t iter) {
@@ -43,7 +44,7 @@ std::size_t mandel_image::julia_check(double za, double zb, double ca, double cb
     return i;
 }
 
-static void colour_iterations(std::size_t iterations, std::size_t max_iter, pixel& p) {
+static void colour_iterations(std::size_t iterations, std::size_t max_iter, images::pixel& p) {
 
     if(iterations == max_iter) {
         p.red = 0;
@@ -51,7 +52,7 @@ static void colour_iterations(std::size_t iterations, std::size_t max_iter, pixe
         p.blue = 0;
     } else {
         // Colour based on iterations, repeat using modulo
-         p.red = (std::uint8_t)(((double)(242 - 11) / 19) * (iterations % 20) + 11);
+        p.red = (std::uint8_t)(((double)(242 - 11) / 19) * (iterations % 20) + 11);
         p.green = (std::uint8_t)(((double)(154 - 41) / 19) * (iterations % 20) + 41);
         p.blue = (std::uint8_t)(((double)(99 - 150) / 19) * (iterations % 20) + 150);
     }
@@ -73,7 +74,7 @@ void mandel_image::mandelbrot_render(const render_data &render) {
             double cb = (static_cast<double>(y) - height_sub) / (div * render.zoom) + render.b_centre;
             std::size_t i = mandelbrot_check(ca, cb, render.iterations); // Check how many iterations until value blows up to infinity
 
-            pixel& p = pixel_data[coord_to_index(x,y)];
+            images::pixel& p = pixel_data[coord_to_index(x,y)];
             colour_iterations(i, render.iterations, p);
         }
     }
@@ -98,7 +99,7 @@ void mandel_image::julia_render(const render_data &render) {
             double zb = (static_cast<double>(y) - height_sub) / (div * render.zoom);
             std::size_t i = julia_check(za, zb, render.a_centre, render.b_centre, render.iterations); // Check how many iterations until value blows up to infinity
 
-            pixel& p = pixel_data[coord_to_index(x,y)];
+            images::pixel& p = pixel_data[coord_to_index(x,y)];
             colour_iterations(i, render.iterations, p);
         }
     }
@@ -117,4 +118,6 @@ void mandel_image::render(const std::string &file_name, const render_data &rende
         break;
     }
     save_bmp(file_name);
+}
+
 }
